@@ -9,17 +9,17 @@ locals {
 }
 
 module "db" {
-  source  = "terraform-aws-modules/rds/aws"
-  version = "~> 3.0"
-  identifier = format("%s-%s", var.environment, var.rds_instance_name)
-  engine              = var.engine
-  engine_version      = var.engine_version
-  instance_class      = var.instance_class
-  allocated_storage   = var.allocated_storage
-  storage_encrypted   = var.storage_encrypted
-  kms_key_id          = var.kms_key_arn
-  publicly_accessible = var.publicly_accessible
-  replicate_source_db = var.replicate_source_db
+  source                           = "terraform-aws-modules/rds/aws"
+  version                          = "~> 3.0"
+  identifier                       = format("%s-%s", var.environment, var.name)
+  engine                           = var.engine
+  engine_version                   = var.engine_version
+  instance_class                   = var.instance_class
+  allocated_storage                = var.allocated_storage
+  storage_encrypted                = var.storage_encrypted
+  kms_key_id                       = var.kms_key_arn
+  publicly_accessible              = var.publicly_accessible
+  replicate_source_db              = var.replicate_source_db
   name                             = var.db_name
   username                         = var.master_username
   port                             = var.port
@@ -35,13 +35,12 @@ module "db" {
   apply_immediately                = var.apply_immediately
   random_password_length           = var.random_password_length
   create_random_password           = var.create_random_password
-  monitoring_interval             = "30"
-  monitoring_role_name            = format("%s-%s-MyRDSMonitoringRole", var.rds_instance_name, var.environment)
-  create_monitoring_role          = true
-  enabled_cloudwatch_logs_exports = ["postgresql"]
-
+  monitoring_interval              = "30"
+  monitoring_role_name             = format("%s-%s-RDSPostgresql", var.name, var.environment)
+  create_monitoring_role           = true
+  enabled_cloudwatch_logs_exports  = ["postgresql"]
   tags = merge(
-    { "Name" = format("%s-%s", var.environment, var.rds_instance_name) },
+    { "Name" = format("%s-%s", var.environment, var.name) },
     local.tags,
   )
 
@@ -85,7 +84,7 @@ module "security_group_rds" {
   source      = "terraform-aws-modules/security-group/aws"
   version     = "~> 4"
   create      = var.create_security_group
-  name        = format("%s-%s-%s", var.environment, var.rds_instance_name, "rds-sg")
+  name        = format("%s-%s-%s", var.environment, var.name, "rds-sg")
   description = "Complete PostgreSQL example security group"
   vpc_id      = var.vpc_id
 
@@ -99,7 +98,7 @@ module "security_group_rds" {
   ]
 
   tags = merge(
-    { "Name" = format("%s-%s-%s", var.environment, var.rds_instance_name, "rds-sg") },
+    { "Name" = format("%s-%s-%s", var.environment, var.name, "rds-sg") },
     local.tags,
   )
 }
