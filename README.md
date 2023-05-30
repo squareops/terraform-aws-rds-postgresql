@@ -21,10 +21,10 @@ This Terraform module provisions an Amazon RDS PostgreSQL database on AWS. Amazo
 ## Usage Examples
 ```hcl
 module "rds-pg" {
-  source                           = "https://github.com/sq-ia/terraform-aws-rds-postgresql.git"
+  source                           = "squareops/postgresql-rds/aws"
   name                             = "skaf"
   db_name                          = "postgres"
-  vpc_id                           = "vpc-047eb87de44acfb73"
+  vpc_id                           = "vpc-047eb8acfb73"
   multi_az                         = "true"
   subnet_ids                       = ["subnet-b39cfc", "subnet-090b8d8"]
   environment                      = "prod"
@@ -37,13 +37,13 @@ module "rds-pg" {
   skip_final_snapshot              = true
   backup_window                    = "03:00-06:00"
   maintenance_window               = "Mon:00:00-Mon:03:00"
-  allowed_security_groups          = ["sg-013cb57dc3bc6f880"]
   major_engine_version             = "15.2"
   deletion_protection              = false
+  allowed_security_groups          = ["sg-013cbf880"]
   final_snapshot_identifier_prefix = "final"
 }
 ```
-Refer [examples](https://github.com/sq-ia/terraform-aws-rds-postgresql/tree/main/example/complete) for more details.
+Refer [examples](https://github.com/RohitSquareops/terraform-aws-rds-postgresql/tree/main/example/complete) for more details.
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
@@ -130,7 +130,7 @@ Refer [examples](https://github.com/sq-ia/terraform-aws-rds-postgresql/tree/main
 
 To report an issue with a project:
 
-  1. Check the repository's [issue tracker](https://github.com/sq-ia/terraform-aws-rds-postgresql/issues) on GitHub
+  1. Check the repository's [issue tracker](https://github.com/RohitSquareops/terraform-aws-rds-postgresql/issues) on GitHub
   2. Search to check if the issue has already been reported
   3. If you can't find an answer to your question in the documentation or issue tracker, you can ask a question by creating a new issue. Make sure to provide enough context and details.
 
@@ -142,7 +142,7 @@ Apache License, Version 2.0, January 2004 (https://www.apache.org/licenses/LICEN
 
 To support our GitHub project by liking it, you can follow these steps:
 
-  1. Visit the repository: Navigate to the [GitHub repository](https://github.com/sq-ia/terraform-aws-rds-postgresql)
+  1. Visit the repository: Navigate to the [GitHub repository](https://github.com/RohitSquareops/terraform-aws-rds-postgresql)
 
   2. Click the "Star" button: On the repository page, you'll see a "Star" button in the upper right corner. Clicking on it will star the repository, indicating your support for the project.
 

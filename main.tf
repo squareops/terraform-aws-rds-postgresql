@@ -12,32 +12,32 @@ module "db" {
   source                           = "terraform-aws-modules/rds/aws"
   version                          = "~> 3.0"
   identifier                       = format("%s-%s", var.environment, var.name)
-  engine                           = var.engine
-  engine_version                   = var.engine_version
-  instance_class                   = var.instance_class
-  allocated_storage                = var.allocated_storage
-  storage_encrypted                = var.storage_encrypted
-  kms_key_id                       = var.kms_key_arn
-  publicly_accessible              = var.publicly_accessible
-  replicate_source_db              = var.replicate_source_db
   name                             = var.db_name
-  username                         = var.master_username
   port                             = var.port
+  engine                           = var.engine
+  username                         = var.master_username
   multi_az                         = var.multi_az
   subnet_ids                       = var.subnet_ids
+  kms_key_id                       = var.kms_key_arn
+  instance_class                   = var.instance_class
+  engine_version                   = var.engine_version
+  allocated_storage                = var.allocated_storage
+  storage_encrypted                = var.storage_encrypted
+  publicly_accessible              = var.publicly_accessible
+  replicate_source_db              = var.replicate_source_db
   vpc_security_group_ids           = split(",", module.security_group_rds.security_group_id)
   skip_final_snapshot              = var.skip_final_snapshot
-  final_snapshot_identifier_prefix = var.final_snapshot_identifier_prefix
   snapshot_identifier              = var.snapshot_identifier
   maintenance_window               = var.maintenance_window
   backup_window                    = var.backup_window
-  backup_retention_period          = var.backup_retention_period
   apply_immediately                = var.apply_immediately
+  backup_retention_period          = var.backup_retention_period
   random_password_length           = var.random_password_length
   create_random_password           = var.create_random_password
   monitoring_interval              = "30"
   monitoring_role_name             = format("%s-%s-RDSPostgresql", var.name, var.environment)
   create_monitoring_role           = true
+  final_snapshot_identifier_prefix = var.final_snapshot_identifier_prefix
   enabled_cloudwatch_logs_exports  = ["postgresql"]
   tags = merge(
     { "Name" = format("%s-%s", var.environment, var.name) },
@@ -60,8 +60,8 @@ resource "aws_security_group_rule" "default_ingress" {
   description = "From allowed SGs"
 
   type                     = "ingress"
-  from_port                = var.port
   to_port                  = var.port
+  from_port                = var.port
   protocol                 = "tcp"
   source_security_group_id = element(var.allowed_security_groups, count.index)
   security_group_id        = module.security_group_rds.security_group_id
@@ -73,8 +73,8 @@ resource "aws_security_group_rule" "cidr_ingress" {
   description = "From allowed CIDRs"
 
   type              = "ingress"
-  from_port         = var.port
   to_port           = var.port
+  from_port         = var.port
   protocol          = "tcp"
   cidr_blocks       = var.allowed_cidr_blocks
   security_group_id = module.security_group_rds.security_group_id
@@ -83,15 +83,15 @@ resource "aws_security_group_rule" "cidr_ingress" {
 module "security_group_rds" {
   source      = "terraform-aws-modules/security-group/aws"
   version     = "~> 4"
-  create      = var.create_security_group
   name        = format("%s-%s-%s", var.environment, var.name, "rds-sg")
-  description = "Complete PostgreSQL example security group"
+  create      = var.create_security_group
   vpc_id      = var.vpc_id
+  description = "Complete PostgreSQL example security group"
 
   egress_with_cidr_blocks = [
     {
-      from_port   = 0
       to_port     = 0
+      from_port   = 0
       protocol    = "-1"
       cidr_blocks = "0.0.0.0/0"
     },

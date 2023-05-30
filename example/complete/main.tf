@@ -1,18 +1,23 @@
 locals {
   region         = "us-east-2"
-  name           = "skaf"
-  vpc_id         = "vpc-00ae5511ee10671c1"
+  name           = "postgresql"
+  vpc_id         = "vpc-00ae5571c1"
   family         = "postgres15"
   subnet_ids     = ["subnet-0d9a81939c6dd2a6e","subnet-0fd26f0d73dc9e73d"]
   environment    = "prod"
-  kms_key_arn    = "arn:aws:kms:us-east-2:271251951598:key/73ff9e84-83e1-4097-b388-fe29623338a9"
+  kms_key_arn    = "arn:aws:kms:us-east-2:22222222:key/73ff9e84-83e1-fe29623338a9"
   engine_version = "15.2"
   instance_class = "db.m5d.large"
-  allowed_security_groups = ["sg-0a680184e11eafd35"]
+  allowed_security_groups = ["sg-0a680afd35"]
+  additional_tags = {
+    Owner      = "Organization_Name"
+    Expires    = "Never"
+    Department = "Engineering"
+  }
 }
 
 module "rds-pg" {
-  source                           = "git@github.com:sq-ia/terraform-aws-rds-postgresql.git"
+  source                           = "squareops/postgresql-rds/aws"
   name                             = local.name
   db_name                          = "postgres"
   multi_az                         = "true"
