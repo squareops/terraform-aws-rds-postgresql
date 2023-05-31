@@ -22,8 +22,8 @@ This Terraform module provisions an Amazon RDS PostgreSQL database on AWS. Amazo
 ```hcl
 module "rds-pg" {
   source                           = "squareops/postgresql-rds/aws"
-  name                             = "skaf"
-  db_name                          = "postgres"
+  name                             = "postgresql"
+  db_name                          = "proddb"
   vpc_id                           = "vpc-047eb8acfb73"
   multi_az                         = "true"
   subnet_ids                       = ["subnet-b39cfc", "subnet-090b8d8"]
@@ -43,7 +43,10 @@ module "rds-pg" {
   final_snapshot_identifier_prefix = "final"
 }
 ```
-Refer [examples](https://github.com/RohitSquareops/terraform-aws-rds-postgresql/tree/main/example/complete) for more details.
+Refer [examples](https://github.com/squareops/terraform-aws-rds-postgresql/tree/main/example/complete) for more details.
+
+## IAM Permissions
+The required IAM permissions to create resources from this module can be found [here](https://github.com/squareops/terraform-aws-rds-postgresql/blob/main/IAM.md)
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
@@ -130,7 +133,7 @@ Refer [examples](https://github.com/RohitSquareops/terraform-aws-rds-postgresql/
 
 To report an issue with a project:
 
-  1. Check the repository's [issue tracker](https://github.com/RohitSquareops/terraform-aws-rds-postgresql/issues) on GitHub
+  1. Check the repository's [issue tracker](https://github.com/squareops/terraform-aws-rds-postgresql/issues) on GitHub
   2. Search to check if the issue has already been reported
   3. If you can't find an answer to your question in the documentation or issue tracker, you can ask a question by creating a new issue. Make sure to provide enough context and details.
 
@@ -142,7 +145,7 @@ Apache License, Version 2.0, January 2004 (https://www.apache.org/licenses/LICEN
 
 To support our GitHub project by liking it, you can follow these steps:
 
-  1. Visit the repository: Navigate to the [GitHub repository](https://github.com/RohitSquareops/terraform-aws-rds-postgresql)
+  1. Visit the repository: Navigate to the [GitHub repository](https://github.com/squareops/terraform-aws-rds-postgresql)
 
   2. Click the "Star" button: On the repository page, you'll see a "Star" button in the upper right corner. Clicking on it will star the repository, indicating your support for the project.
 

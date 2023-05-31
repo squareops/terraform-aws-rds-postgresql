@@ -3,7 +3,7 @@ locals {
   name           = "postgresql"
   vpc_id         = "vpc-00ae5571c1"
   family         = "postgres15"
-  subnet_ids     = ["subnet-0d9a81939c6dd2a6e","subnet-0fd26f0d73dc9e73d"]
+  subnet_ids     = ["subnet-0d9a8193d2a6e","subnet-0fd263dc9e73d"]
   environment    = "prod"
   kms_key_arn    = "arn:aws:kms:us-east-2:22222222:key/73ff9e84-83e1-fe29623338a9"
   engine_version = "15.2"
