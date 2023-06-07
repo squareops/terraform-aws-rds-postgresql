@@ -17,7 +17,7 @@ locals {
 }
 
 module "rds-pg" {
-  source                           = "squareops/postgresql-rds/aws"
+  source                           = "squareops/rds-postgresql/aws"
   name                             = local.name
   db_name                          = "postgres"
   multi_az                         = "true"

@@ -21,7 +21,7 @@ This Terraform module provisions an Amazon RDS PostgreSQL database on AWS. Amazo
 ## Usage Examples
 ```hcl
 module "rds-pg" {
-  source                           = "squareops/postgresql-rds/aws"
+  source                           = "squareops/rds-postgresql/aws"
   name                             = "postgresql"
   db_name                          = "proddb"
   vpc_id                           = "vpc-047eb8acfb73"
