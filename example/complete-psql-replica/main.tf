@@ -9,10 +9,10 @@ locals {
   }
   vpc_cidr = "10.20.0.0/16"
   family                  = "postgres15"
+  kms_key_arn             = "arn:aws:kms:ap-south-1:271251951598:key/4d866bc6-b842-4848-b2d0-cb74ac2e9752"
   engine_version = "15.2"
   current_identity = data.aws_caller_identity.current.arn
   instance_class = "db.m5d.large"
-  storage_type = "gp3"
 }
 
 data "aws_caller_identity" "current" {}
@@ -78,6 +78,7 @@ module "vpc" {
 
 module "rds-pg" {
   source                           = "../.."
+  replica_enable = true
   name                             = local.name
   db_name                          = "postgres"
   multi_az                         = "true"
@@ -86,12 +87,11 @@ module "rds-pg" {
   subnet_ids                       = module.vpc.database_subnets ## db subnets
   environment                      = local.environment
   kms_key_arn                      = module.kms.key_arn
-  storage_type = local.storage_type
   engine_version                   = local.engine_version
   instance_class                   = local.instance_class
   master_username                  = "pguser"
   allocated_storage                = "20"
-  max_allocated_storage            = 120
+  max_allocated_storage = 120
   publicly_accessible              = false
   skip_final_snapshot              = true
   backup_window                    = "03:00-06:00"

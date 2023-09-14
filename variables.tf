@@ -38,14 +38,14 @@ variable "backup_retention_period" {
 
 variable "backup_window" {
   description = "The preferred window for taking automated backups of the database"
-  default     = ""
+  default     = "03:00-06:00"
   type        = string
 }
 
-variable "create_random_password" {
-  description = "Whether to create a random password for the RDS primary cluster"
+variable "manage_master_user_password" {
+  description = "Whether to manage the master user password of the RDS primary cluster automatically"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "create_security_group" {
@@ -128,7 +128,7 @@ variable "master_username" {
 
 variable "maintenance_window" {
   description = "The preferred window for performing database maintenance"
-  default     = ""
+  default     = "Mon:00:00-Mon:03:00"
   type        = string
 }
 
@@ -157,15 +157,21 @@ variable "publicly_accessible" {
 }
 
 variable "random_password_length" {
-  description = "The length of the randomly generated password for the RDS primary cluster (default: 10)"
+  description = "The length of the randomly generated password for the RDS primary cluster (default: 16)"
   type        = number
-  default     = 10
+  default     = 16
 }
 
 variable "replicate_source_db" {
   description = "Specifies that this resource is a replicate database, and uses the specified value as the source database identifier"
   type        = string
   default     = null
+}
+
+variable "create_db_subnet_group" {
+  description = "Whether to create a database subnet group"
+  type        = bool
+  default     = true
 }
 
 variable "skip_final_snapshot" {
@@ -196,4 +202,46 @@ variable "vpc_id" {
   description = "The ID of the VPC where the RDS cluster will be deployed"
   default     = ""
   type        = string
+}
+
+variable "enable_storage_autoscaling" {
+  description = "Whether enable storage autoscaling or not"
+  default = true
+  type = bool
+}
+
+variable "max_allocated_storage" {
+  description = "The Maximum storage capacity for the database value after autoscaling"
+  default = null
+  type = number
+}
+
+variable "storage_type" {
+  description = "The storage type for the database storage like gp2,gp3,io1"
+  default = "gp2"
+  type = string
+}
+
+variable "replica_enable" {
+  description = "Whether enable replica DB"
+  default = false
+  type = bool
+}
+
+variable "replica_count" {
+  description = "The number of replica instance"
+  default = 1
+  type = number
+}
+
+variable "performance_insights_enabled" {
+  description = "Specifies whether Performance Insights are enabled"
+  type        = bool
+  default     = false
+}
+
+variable "performance_insights_retention_period" {
+  description = "The amount of time in days to retain Performance Insights data. Valid values are `7`, `731` (2 years) or a multiple of `31`"
+  type        = number
+  default     = 7
 }
