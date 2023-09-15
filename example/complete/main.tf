@@ -1,18 +1,19 @@
 locals {
-  region      = "ap-south-1"
-  environment = "dev"
-  name        = "module-test"
-  additional_aws_tags = {
-    Owner      = "SquareOps"
+  region         = "us-east-2"
+  name           = "postgresql"
+  family         = "postgres15"
+  environment    = "prod"
+  engine_version = "15.2"
+  instance_class = "db.m5d.large"
+  vpc_cidr = "10.20.0.0/16"
+  allowed_security_groups = ["sg-0a680afd35"]
+  additional_tags = {
+    Owner      = "Organization_Name"
     Expires    = "Never"
     Department = "Engineering"
   }
-  vpc_cidr = "10.20.0.0/16"
-  family                  = "postgres15"
-  engine_version = "15.2"
-  current_identity = data.aws_caller_identity.current.arn
-  instance_class = "db.m5d.large"
   storage_type = "gp3"
+  current_identity = data.aws_caller_identity.current.arn
 }
 
 data "aws_caller_identity" "current" {}
@@ -36,7 +37,7 @@ module "kms" {
   key_service_users                      = [local.current_identity]
   key_statements = [
     {
-      sid = "CloudWatchLogs"
+      sid = "Allow use of the key"
       actions = [
         "kms:Encrypt*",
         "kms:Decrypt*",
@@ -48,8 +49,26 @@ module "kms" {
 
       principals = [
         {
+          type        = "Service"
+          identifiers = [
+            "monitoring.rds.amazonaws.com",
+            "rds.amazonaws.com",
+          ]
+        }
+      ]
+    },
+        {
+      sid = "Enable IAM User Permissions"
+      actions = ["kms:*"]
+      resources = ["*"]
+
+      principals = [
+        {
           type        = "AWS"
-          identifiers = ["*"]
+          identifiers = [
+            "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root",
+            data.aws_caller_identity.current.arn,
+          ]
         }
       ]
     }
@@ -67,7 +86,7 @@ module "vpc" {
   name                  = local.name
   vpc_cidr              = local.vpc_cidr
   environment           = local.environment
-  availability_zones    = ["ap-south-1a", "ap-south-1b"]
+  availability_zones    = ["us-east-2a", "us-east-2b"]
   public_subnet_enabled = true
   auto_assign_public_ip = true
   intra_subnet_enabled                            = false
@@ -77,7 +96,7 @@ module "vpc" {
 }
 
 module "rds-pg" {
-  source                           = "../.."
+  source                           = "squareops/rds-postgresql/aws"
   name                             = local.name
   db_name                          = "postgres"
   multi_az                         = "true"
@@ -86,7 +105,7 @@ module "rds-pg" {
   subnet_ids                       = module.vpc.database_subnets ## db subnets
   environment                      = local.environment
   kms_key_arn                      = module.kms.key_arn
-  storage_type = local.storage_type
+  storage_type                     = local.storage_type
   engine_version                   = local.engine_version
   instance_class                   = local.instance_class
   master_username                  = "pguser"

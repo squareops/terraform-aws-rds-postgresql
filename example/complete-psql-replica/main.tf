@@ -1,18 +1,19 @@
 locals {
-  region      = "ap-south-1"
-  environment = "dev"
-  name        = "module-test"
+  region      = "us-east-2"
+  environment = "prod"
+  name        = "postgresql"
   additional_aws_tags = {
-    Owner      = "SquareOps"
+    Owner      = "Organization_Name"
     Expires    = "Never"
     Department = "Engineering"
   }
   vpc_cidr = "10.20.0.0/16"
   family                  = "postgres15"
-  kms_key_arn             = "arn:aws:kms:ap-south-1:271251951598:key/4d866bc6-b842-4848-b2d0-cb74ac2e9752"
   engine_version = "15.2"
   current_identity = data.aws_caller_identity.current.arn
   instance_class = "db.m5d.large"
+  replica_enable = true
+  replica_count = 1
 }
 
 data "aws_caller_identity" "current" {}
@@ -67,7 +68,7 @@ module "vpc" {
   name                  = local.name
   vpc_cidr              = local.vpc_cidr
   environment           = local.environment
-  availability_zones    = ["ap-south-1a", "ap-south-1b"]
+  availability_zones    = ["us-east-2a", "us-east-2b"]
   public_subnet_enabled = true
   auto_assign_public_ip = true
   intra_subnet_enabled                            = false
@@ -77,12 +78,13 @@ module "vpc" {
 }
 
 module "rds-pg" {
-  source                           = "../.."
-  replica_enable = true
+  source                           = "squareops/rds-postgresql/aws"
   name                             = local.name
   db_name                          = "postgres"
   multi_az                         = "true"
   family                           = local.family
+  replica_enable                   = local.replica_enable
+  replica_count                    = local.replica_count
   vpc_id                           = module.vpc.vpc_id
   subnet_ids                       = module.vpc.database_subnets ## db subnets
   environment                      = local.environment
@@ -91,7 +93,7 @@ module "rds-pg" {
   instance_class                   = local.instance_class
   master_username                  = "pguser"
   allocated_storage                = "20"
-  max_allocated_storage = 120
+  max_allocated_storage            = 120
   publicly_accessible              = false
   skip_final_snapshot              = true
   backup_window                    = "03:00-06:00"

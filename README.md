@@ -17,6 +17,7 @@ This Terraform module provisions an Amazon RDS PostgreSQL database on AWS. Amazo
   6. Supports encryption at rest using AWS Key Management Service (KMS) for enhanced security.
   7. Enables fine-grained control over network access through security groups and VPC settings.
   8. Offers customizable tags for resource categorization and management.
+  9. Supports useful features to enable storage autoscaling and Replica configuration with desired number of replicas.
 
 ## Usage Examples
 ```hcl
