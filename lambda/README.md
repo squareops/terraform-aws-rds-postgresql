@@ -16,7 +16,7 @@ No requirements.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.17.0 |
 
 ## Modules
 
@@ -56,5 +56,4 @@ No modules.
 | <a name="output_exec_role_id"></a> [exec\_role\_id](#output\_exec\_role\_id) | The ID of the Function's IAM Role. |
 | <a name="output_invoke_arn"></a> [invoke\_arn](#output\_invoke\_arn) | The ARN to be used for invoking Lambda Function from API Gateway. |
 | <a name="output_name"></a> [name](#output\_name) | The name of the Lambda Function. |
-
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

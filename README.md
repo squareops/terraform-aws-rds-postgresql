@@ -17,6 +17,7 @@ This Terraform module provisions an Amazon RDS PostgreSQL database on AWS. Amazo
   6. Supports encryption at rest using AWS Key Management Service (KMS) for enhanced security.
   7. Enables fine-grained control over network access through security groups and VPC settings.
   8. Offers customizable tags for resource categorization and management.
+  9. CloudWatch Alerts: Set up CloudWatch alarms to monitor the health and performance of your Redis cluster. Integrate these alarms with AWS Simple Notification Service (SNS) to receive real-time alerts. Use AWS Lambda functions to customize your alerting logic, and send notifications to Slack channels for immediate visibility into your RDS POstgresql status.
 
 ## Usage Examples
 ```hcl
