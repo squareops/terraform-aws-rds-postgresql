@@ -2,7 +2,7 @@ locals {
   region      = "us-east-2"
   environment = "prod"
   name        = "postgresql"
-  additional_aws_tags = {
+  additional_tags = {
     Owner      = "Organization_Name"
     Expires    = "Never"
     Department = "Engineering"
@@ -11,6 +11,7 @@ locals {
   family                  = "postgres15"
   engine_version = "15.2"
   current_identity = data.aws_caller_identity.current.arn
+  allowed_security_groups = ["sg-0a680afd35"]
   instance_class = "db.m5d.large"
   replica_enable = true
   replica_count = 1
@@ -59,7 +60,7 @@ module "kms" {
   # Aliases
   aliases = ["${local.name}"]
 
-  tags = local.additional_aws_tags
+  tags = local.additional_tags
 }
 
 
