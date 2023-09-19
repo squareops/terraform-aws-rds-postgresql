@@ -1,14 +1,14 @@
 locals {
   region         = "us-east-2"
   name           = "postgresql"
-  vpc_id         = "vpc-00ae5571c1"
+  vpc_id         = "vpc-06861ba817a8cda10"
   family         = "postgres15"
-  subnet_ids     = ["subnet-0d9a8193d2a6e","subnet-0fd263dc9e73d"]
+  subnet_ids     = ["subnet-09e8f6ea27b7e36d0","subnet-0b070110454617a90"]
   environment    = "prod"
-  kms_key_arn    = "arn:aws:kms:us-east-2:22222222:key/73ff9e84-83e1-fe29623338a9"
+  kms_key_arn    = ""
   engine_version = "15.2"
   instance_class = "db.m5d.large"
-  allowed_security_groups = ["sg-0a680afd35"]
+  allowed_security_groups = ["sg-0ef14212995d67a2d"]
   additional_tags = {
     Owner      = "Organization_Name"
     Expires    = "Never"
@@ -38,4 +38,10 @@ module "rds-pg" {
   allowed_security_groups          = local.allowed_security_groups
   major_engine_version             = local.engine_version
   deletion_protection              = false
+  cloudwatch_metric_alarms_enabled = true
+  alarm_cpu_threshold_percent      = 70
+  disk_free_storage_space          = "10000000" # in bytes
+  slack_username                   = ""
+  slack_channel                    = ""
+  slack_webhook_url                = ""
 }

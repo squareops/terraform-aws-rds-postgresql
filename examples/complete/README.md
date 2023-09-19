@@ -24,7 +24,7 @@ No providers.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_rds-pg"></a> [rds-pg](#module\_rds-pg) | squareops/postgresql-rds/aws | n/a |
+| <a name="module_rds-pg"></a> [rds-pg](#module\_rds-pg) | squareops/rds-postgresql/aws | n/a |
 
 ## Resources
 
