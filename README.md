@@ -70,42 +70,38 @@ The required IAM permissions to create resources from this module can be found [
 
 | Name | Version |
 |------|---------|
+| <a name="provider_archive"></a> [archive](#provider\_archive) | 2.4.0 |
 | <a name="provider_aws"></a> [aws](#provider\_aws) | 5.13.1 |
 | <a name="provider_random"></a> [random](#provider\_random) | 3.5.1 |
-| <a name="provider_archive"></a> [archive](#provider\_archive) | 2.4.0 |
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
+| <a name="module_cw_sns_slack"></a> [cw\_sns\_slack](#module\_cw\_sns\_slack) | ./lambda | n/a |
 | <a name="module_db"></a> [db](#module\_db) | terraform-aws-modules/rds/aws | 6.1.0 |
 | <a name="module_db_replica"></a> [db\_replica](#module\_db\_replica) | terraform-aws-modules/rds/aws | 6.1.0 |
-| <a name="module_cw_sns_slack"></a> [cw\_sns\_slack](#module\_cw\_sns\_slack) | ./lambda | n/a |
 | <a name="module_security_group_rds"></a> [security\_group\_rds](#module\_security\_group\_rds) | terraform-aws-modules/security-group/aws | ~> 4 |
 
 ## Resources
 
 | Name | Type |
 |------|------|
+| [aws_cloudwatch_metric_alarm.cache_cpu](https://registry.terraform.io/providers/hashicorp/aws/5.13.1/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.disk_free_storage_space_too_low](https://registry.terraform.io/providers/hashicorp/aws/5.13.1/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_kms_ciphertext.slack_url](https://registry.terraform.io/providers/hashicorp/aws/5.13.1/docs/resources/kms_ciphertext) | resource |
+| [aws_kms_key.this](https://registry.terraform.io/providers/hashicorp/aws/5.13.1/docs/resources/kms_key) | resource |
+| [aws_lambda_permission.sns_lambda_slack_invoke](https://registry.terraform.io/providers/hashicorp/aws/5.13.1/docs/resources/lambda_permission) | resource |
 | [aws_secretsmanager_secret.secret_master_db](https://registry.terraform.io/providers/hashicorp/aws/5.13.1/docs/resources/secretsmanager_secret) | resource |
 | [aws_secretsmanager_secret_version.rds_credentials](https://registry.terraform.io/providers/hashicorp/aws/5.13.1/docs/resources/secretsmanager_secret_version) | resource |
 | [aws_security_group_rule.cidr_ingress](https://registry.terraform.io/providers/hashicorp/aws/5.13.1/docs/resources/security_group_rule) | resource |
 | [aws_security_group_rule.default_ingress](https://registry.terraform.io/providers/hashicorp/aws/5.13.1/docs/resources/security_group_rule) | resource |
+| [aws_sns_topic.slack_topic](https://registry.terraform.io/providers/hashicorp/aws/5.13.1/docs/resources/sns_topic) | resource |
+| [aws_sns_topic_subscription.slack-endpoint](https://registry.terraform.io/providers/hashicorp/aws/5.13.1/docs/resources/sns_topic_subscription) | resource |
 | [random_password.master](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
+| [archive_file.lambdazip](https://registry.terraform.io/providers/hashicorp/archive/latest/docs/data-sources/file) | data source |
 | [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/5.13.1/docs/data-sources/availability_zones) | data source |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/5.13.1/docs/data-sources/region) | data source |
-| [aws_cloudwatch_metric_alarm.cache_cpu](https://registry.terraform.io/providers/hashicorp/aws/3.43.0/docs/resources/cloudwatch_metric_alarm) | resource |
-| [aws_cloudwatch_metric_alarm.disk_free_storage_space_too_low](https://registry.terraform.io/providers/hashicorp/aws/3.43.0/docs/resources/cloudwatch_metric_alarm) | resource |
-| [aws_kms_ciphertext.slack_url](https://registry.terraform.io/providers/hashicorp/aws/3.43.0/docs/resources/kms_ciphertext) | resource |
-| [aws_kms_key.this](https://registry.terraform.io/providers/hashicorp/aws/3.43.0/docs/resources/kms_key) | resource |
-| [aws_lambda_permission.sns_lambda_slack_invoke](https://registry.terraform.io/providers/hashicorp/aws/3.43.0/docs/resources/lambda_permission) | resource |
-| [aws_security_group_rule.cidr_ingress](https://registry.terraform.io/providers/hashicorp/aws/3.43.0/docs/resources/security_group_rule) | resource |
-| [aws_security_group_rule.default_ingress](https://registry.terraform.io/providers/hashicorp/aws/3.43.0/docs/resources/security_group_rule) | resource |
-| [aws_sns_topic.slack_topic](https://registry.terraform.io/providers/hashicorp/aws/3.43.0/docs/resources/sns_topic) | resource |
-| [aws_sns_topic_subscription.slack-endpoint](https://registry.terraform.io/providers/hashicorp/aws/3.43.0/docs/resources/sns_topic_subscription) | resource |
-| [archive_file.lambdazip](https://registry.terraform.io/providers/hashicorp/archive/latest/docs/data-sources/file) | data source |
-| [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/3.43.0/docs/data-sources/availability_zones) | data source |
-| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/3.43.0/docs/data-sources/region) | data source |
 
 ## Inputs
 
@@ -119,10 +115,9 @@ The required IAM permissions to create resources from this module can be found [
 | <a name="input_allowed_security_groups"></a> [allowed\_security\_groups](#input\_allowed\_security\_groups) | A list of Security Group IDs to allow access to the database | `list(any)` | `[]` | no |
 | <a name="input_apply_immediately"></a> [apply\_immediately](#input\_apply\_immediately) | Specifies whether any cluster modifications are applied immediately or during the next maintenance window | `bool` | `false` | no |
 | <a name="input_backup_retention_period"></a> [backup\_retention\_period](#input\_backup\_retention\_period) | The number of days to retain backups for | `number` | `5` | no |
-| <a name="input_backup_window"></a> [backup\_window](#input\_backup\_window) | The preferred window for taking automated backups of the database | `string` | `""` | no |
-| <a name="input_create_db_subnet_group"></a> [create\_db\_subnet\_group](#input\_create\_db\_subnet\_group) | Whether to create a database subnet group | `bool` | `true` | no |
+| <a name="input_backup_window"></a> [backup\_window](#input\_backup\_window) | The preferred window for taking automated backups of the database | `string` | `"03:00-06:00"` | no |
 | <a name="input_cloudwatch_metric_alarms_enabled"></a> [cloudwatch\_metric\_alarms\_enabled](#input\_cloudwatch\_metric\_alarms\_enabled) | Boolean flag to enable/disable CloudWatch metrics alarms | `bool` | `false` | no |
-| <a name="input_create_random_password"></a> [create\_random\_password](#input\_create\_random\_password) | Whether to create a random password for the RDS primary cluster | `bool` | `true` | no |
+| <a name="input_create_db_subnet_group"></a> [create\_db\_subnet\_group](#input\_create\_db\_subnet\_group) | Whether to create a database subnet group | `bool` | `true` | no |
 | <a name="input_create_security_group"></a> [create\_security\_group](#input\_create\_security\_group) | Whether to create a security group for the database | `bool` | `true` | no |
 | <a name="input_cw_sns_topic_arn"></a> [cw\_sns\_topic\_arn](#input\_cw\_sns\_topic\_arn) | The username to use when sending notifications to Slack. | `string` | `""` | no |
 | <a name="input_db_name"></a> [db\_name](#input\_db\_name) | The name of the automatically created database on cluster creation | `string` | `""` | no |
@@ -144,9 +139,9 @@ The required IAM permissions to create resources from this module can be found [
 | <a name="input_max_allocated_storage"></a> [max\_allocated\_storage](#input\_max\_allocated\_storage) | The Maximum storage capacity for the database value after autoscaling | `number` | `null` | no |
 | <a name="input_multi_az"></a> [multi\_az](#input\_multi\_az) | Enable multi-AZ for disaster recovery | `bool` | `false` | no |
 | <a name="input_name"></a> [name](#input\_name) | The name of the RDS instance | `string` | `""` | no |
+| <a name="input_ok_actions"></a> [ok\_actions](#input\_ok\_actions) | The list of actions to execute when this alarm transitions into an OK state from any other state. Each action is specified as an Amazon Resource Number (ARN) | `list(string)` | `[]` | no |
 | <a name="input_performance_insights_enabled"></a> [performance\_insights\_enabled](#input\_performance\_insights\_enabled) | Specifies whether Performance Insights are enabled | `bool` | `false` | no |
 | <a name="input_performance_insights_retention_period"></a> [performance\_insights\_retention\_period](#input\_performance\_insights\_retention\_period) | The amount of time in days to retain Performance Insights data. Valid values are `7`, `731` (2 years) or a multiple of `31` | `number` | `7` | no |
-| <a name="input_ok_actions"></a> [ok\_actions](#input\_ok\_actions) | The list of actions to execute when this alarm transitions into an OK state from any other state. Each action is specified as an Amazon Resource Number (ARN) | `list(string)` | `[]` | no |
 | <a name="input_port"></a> [port](#input\_port) | The port number for the database | `number` | `5432` | no |
 | <a name="input_publicly_accessible"></a> [publicly\_accessible](#input\_publicly\_accessible) | Specifies whether the RDS instance is publicly accessible over the internet | `bool` | `false` | no |
 | <a name="input_random_password_length"></a> [random\_password\_length](#input\_random\_password\_length) | The length of the randomly generated password for the RDS primary cluster (default: 16) | `number` | `16` | no |
