@@ -26,9 +26,13 @@ This example will be very useful for users who are new to a module and want to q
 
 | Name | Source | Version |
 |------|--------|---------|
+<<<<<<< HEAD:example/complete/README.md
 | <a name="module_kms"></a> [kms](#module\_kms) | terraform-aws-modules/kms/aws | n/a |
 | <a name="module_rds-pg"></a> [rds-pg](#module\_rds-pg) | ../.. | n/a |
 | <a name="module_vpc"></a> [vpc](#module\_vpc) | squareops/vpc/aws | n/a |
+=======
+| <a name="module_rds-pg"></a> [rds-pg](#module\_rds-pg) | squareops/rds-postgresql/aws | n/a |
+>>>>>>> 9aa03f29335a0d68c197a81a1599e7d71e844a24:examples/complete/README.md
 
 ## Resources
 

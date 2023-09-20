@@ -118,4 +118,10 @@ module "rds-pg" {
   final_snapshot_identifier_prefix = "final"
   major_engine_version             = local.engine_version
   deletion_protection              = false
+  cloudwatch_metric_alarms_enabled = true
+  alarm_cpu_threshold_percent      = 70
+  disk_free_storage_space          = "10000000" # in bytes
+  slack_username                   = ""
+  slack_channel                    = ""
+  slack_webhook_url                = ""
 }
