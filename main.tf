@@ -167,7 +167,7 @@ resource "aws_cloudwatch_metric_alarm" "cache_cpu" {
   threshold = var.alarm_cpu_threshold_percent
 
   dimensions = {
-    DBInstanceIdentifier = module.db.db_instance_id
+    DBInstanceIdentifier = module.db.db_instance_identifier
   }
 
   alarm_actions = [aws_sns_topic.slack_topic[0].arn]
@@ -194,7 +194,7 @@ resource "aws_cloudwatch_metric_alarm" "disk_free_storage_space_too_low" {
   threshold = var.disk_free_storage_space
 
   dimensions = {
-    DBInstanceIdentifier = module.db.db_instance_id
+    DBInstanceIdentifier = module.db.db_instance_identifier
   }
 
   alarm_actions = [aws_sns_topic.slack_topic[0].arn]
