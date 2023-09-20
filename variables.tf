@@ -204,6 +204,60 @@ variable "vpc_id" {
   type        = string
 }
 
+variable "disk_free_storage_space" {
+  type        = string
+  default     = "10000000000" // 10 GB
+  description = "Alarm threshold for the 'lowFreeStorageSpace' alarm"
+}
+
+variable "cloudwatch_metric_alarms_enabled" {
+  type        = bool
+  description = "Boolean flag to enable/disable CloudWatch metrics alarms"
+  default     = false
+}
+
+variable "alarm_cpu_threshold_percent" {
+  type        = number
+  default     = 75
+  description = "CPU threshold alarm level"
+}
+
+variable "alarm_actions" {
+  type        = list(string)
+  description = "Alarm action list"
+  default     = []
+}
+
+variable "ok_actions" {
+  type        = list(string)
+  description = "The list of actions to execute when this alarm transitions into an OK state from any other state. Each action is specified as an Amazon Resource Number (ARN)"
+  default     = []
+}
+
+variable "slack_webhook_url" {
+  description = "The Slack Webhook URL where notifications will be sent."
+  default     = ""
+  type        = string
+}
+
+variable "slack_channel" {
+  description = "The Slack channel where notifications will be posted."
+  default     = ""
+  type        = string
+}
+
+variable "slack_username" {
+  description = "The username to use when sending notifications to Slack."
+  default     = ""
+  type        = string
+}
+
+variable "cw_sns_topic_arn" {
+  description = "The username to use when sending notifications to Slack."
+  default     = ""
+  type        = string
+}
+
 variable "enable_storage_autoscaling" {
   description = "Whether enable storage autoscaling or not"
   default = true

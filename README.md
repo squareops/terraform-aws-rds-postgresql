@@ -17,7 +17,8 @@ This Terraform module provisions an Amazon RDS PostgreSQL database on AWS. Amazo
   6. Supports encryption at rest using AWS Key Management Service (KMS) for enhanced security.
   7. Enables fine-grained control over network access through security groups and VPC settings.
   8. Offers customizable tags for resource categorization and management.
-  9. Supports useful features to enable storage autoscaling and Replica configuration with desired number of replicas.
+  9. CloudWatch Alerts: Set up CloudWatch alarms to monitor the health and performance of your Redis cluster. Integrate these alarms with AWS Simple Notification Service (SNS) to receive real-time alerts. Use AWS Lambda functions to customize your alerting logic, and send notifications to Slack channels for immediate visibility into your RDS POstgresql status.
+  10. Supports useful features to enable storage autoscaling and Replica configuration with desired number of replicas.
 
 ## Usage Examples
 ```hcl
@@ -44,9 +45,15 @@ module "rds-pg" {
   deletion_protection              = false
   allowed_security_groups          = ["sg-013cbf880"]
   final_snapshot_identifier_prefix = "final"
+  cloudwatch_metric_alarms_enabled = true
+  alarm_cpu_threshold_percent      = 70
+  disk_free_storage_space          = "10000000" # in bytes
+  slack_username                   = "John"
+  slack_channel                    = "skaf-dev"
+  slack_webhook_url                = "https://hooks/xxxxxxxx"
 }
 ```
-Refer [examples](https://github.com/squareops/terraform-aws-rds-postgresql/tree/main/example/complete) for more details.
+Refer [examples](https://github.com/squareops/terraform-aws-rds-postgresql/tree/main/examples/complete) for more details.
 
 ## IAM Permissions
 The required IAM permissions to create resources from this module can be found [here](https://github.com/squareops/terraform-aws-rds-postgresql/blob/main/IAM.md)
@@ -65,6 +72,7 @@ The required IAM permissions to create resources from this module can be found [
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | 5.13.1 |
 | <a name="provider_random"></a> [random](#provider\_random) | 3.5.1 |
+| <a name="provider_archive"></a> [archive](#provider\_archive) | 2.4.0 |
 
 ## Modules
 
@@ -72,6 +80,7 @@ The required IAM permissions to create resources from this module can be found [
 |------|--------|---------|
 | <a name="module_db"></a> [db](#module\_db) | terraform-aws-modules/rds/aws | 6.1.0 |
 | <a name="module_db_replica"></a> [db\_replica](#module\_db\_replica) | terraform-aws-modules/rds/aws | 6.1.0 |
+| <a name="module_cw_sns_slack"></a> [cw\_sns\_slack](#module\_cw\_sns\_slack) | ./lambda | n/a |
 | <a name="module_security_group_rds"></a> [security\_group\_rds](#module\_security\_group\_rds) | terraform-aws-modules/security-group/aws | ~> 4 |
 
 ## Resources
@@ -85,22 +94,40 @@ The required IAM permissions to create resources from this module can be found [
 | [random_password.master](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
 | [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/5.13.1/docs/data-sources/availability_zones) | data source |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/5.13.1/docs/data-sources/region) | data source |
+| [aws_cloudwatch_metric_alarm.cache_cpu](https://registry.terraform.io/providers/hashicorp/aws/3.43.0/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.disk_free_storage_space_too_low](https://registry.terraform.io/providers/hashicorp/aws/3.43.0/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_kms_ciphertext.slack_url](https://registry.terraform.io/providers/hashicorp/aws/3.43.0/docs/resources/kms_ciphertext) | resource |
+| [aws_kms_key.this](https://registry.terraform.io/providers/hashicorp/aws/3.43.0/docs/resources/kms_key) | resource |
+| [aws_lambda_permission.sns_lambda_slack_invoke](https://registry.terraform.io/providers/hashicorp/aws/3.43.0/docs/resources/lambda_permission) | resource |
+| [aws_security_group_rule.cidr_ingress](https://registry.terraform.io/providers/hashicorp/aws/3.43.0/docs/resources/security_group_rule) | resource |
+| [aws_security_group_rule.default_ingress](https://registry.terraform.io/providers/hashicorp/aws/3.43.0/docs/resources/security_group_rule) | resource |
+| [aws_sns_topic.slack_topic](https://registry.terraform.io/providers/hashicorp/aws/3.43.0/docs/resources/sns_topic) | resource |
+| [aws_sns_topic_subscription.slack-endpoint](https://registry.terraform.io/providers/hashicorp/aws/3.43.0/docs/resources/sns_topic_subscription) | resource |
+| [archive_file.lambdazip](https://registry.terraform.io/providers/hashicorp/archive/latest/docs/data-sources/file) | data source |
+| [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/3.43.0/docs/data-sources/availability_zones) | data source |
+| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/3.43.0/docs/data-sources/region) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_additional_tags"></a> [additional\_tags](#input\_additional\_tags) | A map of additional tags to apply to the AWS resources | `map(string)` | <pre>{<br>  "automation": "true"<br>}</pre> | no |
+| <a name="input_alarm_actions"></a> [alarm\_actions](#input\_alarm\_actions) | Alarm action list | `list(string)` | `[]` | no |
+| <a name="input_alarm_cpu_threshold_percent"></a> [alarm\_cpu\_threshold\_percent](#input\_alarm\_cpu\_threshold\_percent) | CPU threshold alarm level | `number` | `75` | no |
 | <a name="input_allocated_storage"></a> [allocated\_storage](#input\_allocated\_storage) | The allocated storage capacity for the database in gibibytes (GiB) | `number` | `20` | no |
 | <a name="input_allowed_cidr_blocks"></a> [allowed\_cidr\_blocks](#input\_allowed\_cidr\_blocks) | A list of CIDR blocks that are allowed to access the database | `list(any)` | `[]` | no |
 | <a name="input_allowed_security_groups"></a> [allowed\_security\_groups](#input\_allowed\_security\_groups) | A list of Security Group IDs to allow access to the database | `list(any)` | `[]` | no |
 | <a name="input_apply_immediately"></a> [apply\_immediately](#input\_apply\_immediately) | Specifies whether any cluster modifications are applied immediately or during the next maintenance window | `bool` | `false` | no |
 | <a name="input_backup_retention_period"></a> [backup\_retention\_period](#input\_backup\_retention\_period) | The number of days to retain backups for | `number` | `5` | no |
-| <a name="input_backup_window"></a> [backup\_window](#input\_backup\_window) | The preferred window for taking automated backups of the database | `string` | `"03:00-06:00"` | no |
+| <a name="input_backup_window"></a> [backup\_window](#input\_backup\_window) | The preferred window for taking automated backups of the database | `string` | `""` | no |
 | <a name="input_create_db_subnet_group"></a> [create\_db\_subnet\_group](#input\_create\_db\_subnet\_group) | Whether to create a database subnet group | `bool` | `true` | no |
+| <a name="input_cloudwatch_metric_alarms_enabled"></a> [cloudwatch\_metric\_alarms\_enabled](#input\_cloudwatch\_metric\_alarms\_enabled) | Boolean flag to enable/disable CloudWatch metrics alarms | `bool` | `false` | no |
+| <a name="input_create_random_password"></a> [create\_random\_password](#input\_create\_random\_password) | Whether to create a random password for the RDS primary cluster | `bool` | `true` | no |
 | <a name="input_create_security_group"></a> [create\_security\_group](#input\_create\_security\_group) | Whether to create a security group for the database | `bool` | `true` | no |
+| <a name="input_cw_sns_topic_arn"></a> [cw\_sns\_topic\_arn](#input\_cw\_sns\_topic\_arn) | The username to use when sending notifications to Slack. | `string` | `""` | no |
 | <a name="input_db_name"></a> [db\_name](#input\_db\_name) | The name of the automatically created database on cluster creation | `string` | `""` | no |
 | <a name="input_deletion_protection"></a> [deletion\_protection](#input\_deletion\_protection) | Specifies whether accidental deletion protection is enabled | `bool` | `true` | no |
+| <a name="input_disk_free_storage_space"></a> [disk\_free\_storage\_space](#input\_disk\_free\_storage\_space) | Alarm threshold for the 'lowFreeStorageSpace' alarm | `string` | `"10000000000"` | no |
 | <a name="input_enable_ssl_connection"></a> [enable\_ssl\_connection](#input\_enable\_ssl\_connection) | Whether to enable SSL connection to the database | `bool` | `false` | no |
 | <a name="input_enable_storage_autoscaling"></a> [enable\_storage\_autoscaling](#input\_enable\_storage\_autoscaling) | Whether enable storage autoscaling or not | `bool` | `true` | no |
 | <a name="input_engine"></a> [engine](#input\_engine) | The name of the database engine to be used for this DB cluster | `string` | `"postgres"` | no |
@@ -119,6 +146,7 @@ The required IAM permissions to create resources from this module can be found [
 | <a name="input_name"></a> [name](#input\_name) | The name of the RDS instance | `string` | `""` | no |
 | <a name="input_performance_insights_enabled"></a> [performance\_insights\_enabled](#input\_performance\_insights\_enabled) | Specifies whether Performance Insights are enabled | `bool` | `false` | no |
 | <a name="input_performance_insights_retention_period"></a> [performance\_insights\_retention\_period](#input\_performance\_insights\_retention\_period) | The amount of time in days to retain Performance Insights data. Valid values are `7`, `731` (2 years) or a multiple of `31` | `number` | `7` | no |
+| <a name="input_ok_actions"></a> [ok\_actions](#input\_ok\_actions) | The list of actions to execute when this alarm transitions into an OK state from any other state. Each action is specified as an Amazon Resource Number (ARN) | `list(string)` | `[]` | no |
 | <a name="input_port"></a> [port](#input\_port) | The port number for the database | `number` | `5432` | no |
 | <a name="input_publicly_accessible"></a> [publicly\_accessible](#input\_publicly\_accessible) | Specifies whether the RDS instance is publicly accessible over the internet | `bool` | `false` | no |
 | <a name="input_random_password_length"></a> [random\_password\_length](#input\_random\_password\_length) | The length of the randomly generated password for the RDS primary cluster (default: 16) | `number` | `16` | no |
@@ -126,6 +154,9 @@ The required IAM permissions to create resources from this module can be found [
 | <a name="input_replica_enable"></a> [replica\_enable](#input\_replica\_enable) | Whether enable replica DB | `bool` | `false` | no |
 | <a name="input_replicate_source_db"></a> [replicate\_source\_db](#input\_replicate\_source\_db) | Specifies that this resource is a replicate database, and uses the specified value as the source database identifier | `string` | `null` | no |
 | <a name="input_skip_final_snapshot"></a> [skip\_final\_snapshot](#input\_skip\_final\_snapshot) | Determines whether a final DB snapshot is created before the DB instance is deleted. If set to true, no DB snapshot is created. If set to false, a DB snapshot is created before the DB instance is deleted, using the value from final\_snapshot\_identifier | `bool` | `true` | no |
+| <a name="input_slack_channel"></a> [slack\_channel](#input\_slack\_channel) | The Slack channel where notifications will be posted. | `string` | `""` | no |
+| <a name="input_slack_username"></a> [slack\_username](#input\_slack\_username) | The username to use when sending notifications to Slack. | `string` | `""` | no |
+| <a name="input_slack_webhook_url"></a> [slack\_webhook\_url](#input\_slack\_webhook\_url) | The Slack Webhook URL where notifications will be sent. | `string` | `""` | no |
 | <a name="input_snapshot_identifier"></a> [snapshot\_identifier](#input\_snapshot\_identifier) | Specifies whether to create the database from a snapshot. Use the snapshot ID found in the RDS console, e.g., rds:production-2015-06-26-06-05 | `string` | `null` | no |
 | <a name="input_storage_encrypted"></a> [storage\_encrypted](#input\_storage\_encrypted) | Specifies whether to enable database encryption | `bool` | `true` | no |
 | <a name="input_storage_type"></a> [storage\_type](#input\_storage\_type) | The storage type for the database storage like gp2,gp3,io1 | `string` | `"gp2"` | no |
