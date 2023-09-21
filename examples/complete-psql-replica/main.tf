@@ -1,12 +1,14 @@
 locals {
-  region         = "us-east-2"
-  name           = "postgresql"
-  family         = "postgres15"
-  vpc_cidr       = "10.20.0.0/16"
-  environment    = "prod"
+  region      = "us-east-2"
+  name        = "postgresql"
+  family      = "postgres15"
+  vpc_cidr    = "10.20.0.0/16"
+  environment = "prod"
+  storage_type  = "gp3"
   engine_version = "15.2"
   instance_class = "db.m5d.large"
-  storage_type   = "gp3"
+  replica_enable = true
+  replica_count = 1
   current_identity = data.aws_caller_identity.current.arn
   allowed_security_groups = ["sg-0a680afd35"]
   additional_tags = {
@@ -37,7 +39,7 @@ module "kms" {
   key_service_users                      = [local.current_identity]
   key_statements = [
     {
-      sid = "Allow use of the key"
+      sid = "CloudWatchLogs"
       actions = [
         "kms:Encrypt*",
         "kms:Decrypt*",
@@ -49,26 +51,8 @@ module "kms" {
 
       principals = [
         {
-          type        = "Service"
-          identifiers = [
-            "monitoring.rds.amazonaws.com",
-            "rds.amazonaws.com",
-          ]
-        }
-      ]
-    },
-        {
-      sid = "Enable IAM User Permissions"
-      actions = ["kms:*"]
-      resources = ["*"]
-
-      principals = [
-        {
           type        = "AWS"
-          identifiers = [
-            "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root",
-            data.aws_caller_identity.current.arn,
-          ]
+          identifiers = ["*"]
         }
       ]
     }
@@ -99,11 +83,13 @@ module "rds-pg" {
   source                           = "squareops/rds-postgresql/aws"
   name                             = local.name
   db_name                          = "postgres"
-  multi_az                         = "true"
   family                           = local.family
+  multi_az                         = "true"
   vpc_id                           = module.vpc.vpc_id
   subnet_ids                       = module.vpc.database_subnets ## db subnets
   environment                      = local.environment
+  replica_enable                   = local.replica_enable
+  replica_count                    = local.replica_count
   kms_key_arn                      = module.kms.key_arn
   storage_type                     = local.storage_type
   engine_version                   = local.engine_version
@@ -117,7 +103,7 @@ module "rds-pg" {
   maintenance_window               = "Mon:00:00-Mon:03:00"
   final_snapshot_identifier_prefix = "final"
   major_engine_version             = local.engine_version
-  deletion_protection              = false
+  deletion_protection              = true
   cloudwatch_metric_alarms_enabled = true
   alarm_cpu_threshold_percent      = 70
   disk_free_storage_space          = "10000000" # in bytes
