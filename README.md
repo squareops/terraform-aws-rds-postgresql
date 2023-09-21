@@ -32,6 +32,7 @@ module "rds-pg" {
   environment                      = "prod"
   storage_type                     = "gp3"
   replica_enable                   = false
+  replica_count                    = 1
   kms_key_arn                      = "arn:aws:kms:region:2222222222:key/f8c8d802-a34b"
   engine_version                   = "15.2"
   instance_class                   = "db.m5.large"

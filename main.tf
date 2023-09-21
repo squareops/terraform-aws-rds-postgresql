@@ -21,7 +21,7 @@ module "db" {
   subnet_ids                       = var.subnet_ids
   kms_key_id                       = var.kms_key_arn
   instance_class                   = var.instance_class
-  storage_type = var.storage_type
+  storage_type                     = var.storage_type
   engine_version                   = var.engine_version
   allocated_storage                = var.allocated_storage
   storage_encrypted                = var.storage_encrypted

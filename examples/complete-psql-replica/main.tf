@@ -7,8 +7,9 @@ locals {
     Expires    = "Never"
     Department = "Engineering"
   }
+  family   = "postgres15"
   vpc_cidr = "10.20.0.0/16"
-  family                  = "postgres15"
+  storage_type  = "gp3"
   engine_version = "15.2"
   current_identity = data.aws_caller_identity.current.arn
   allowed_security_groups = ["sg-0a680afd35"]
@@ -25,10 +26,10 @@ module "kms" {
 
   deletion_window_in_days = 7
   description             = "Complete key example showing various configurations available"
-  enable_key_rotation     = false
+  enable_key_rotation     = true
   is_enabled              = true
   key_usage               = "ENCRYPT_DECRYPT"
-  multi_region            = false
+  multi_region            = true
 
   # Policy
   enable_default_policy                  = true
@@ -82,14 +83,15 @@ module "rds-pg" {
   source                           = "squareops/rds-postgresql/aws"
   name                             = local.name
   db_name                          = "postgres"
-  multi_az                         = "true"
   family                           = local.family
-  replica_enable                   = local.replica_enable
-  replica_count                    = local.replica_count
+  multi_az                         = "true"
   vpc_id                           = module.vpc.vpc_id
   subnet_ids                       = module.vpc.database_subnets ## db subnets
   environment                      = local.environment
+  replica_enable                   = local.replica_enable
+  replica_count                    = local.replica_count
   kms_key_arn                      = module.kms.key_arn
+  storage_type                     = local.storage_type
   engine_version                   = local.engine_version
   instance_class                   = local.instance_class
   master_username                  = "pguser"
@@ -101,11 +103,11 @@ module "rds-pg" {
   maintenance_window               = "Mon:00:00-Mon:03:00"
   final_snapshot_identifier_prefix = "final"
   major_engine_version             = local.engine_version
-  deletion_protection              = false
+  deletion_protection              = true
   cloudwatch_metric_alarms_enabled = true
   alarm_cpu_threshold_percent      = 70
   disk_free_storage_space          = "10000000" # in bytes
-  slack_username                   = ""
-  slack_channel                    = ""
-  slack_webhook_url                = ""
+  slack_username                   = "Admin"
+  slack_channel                    = "postgresql-notification"
+  slack_webhook_url                = "https://hooks/xxxxxxxx"
 }
