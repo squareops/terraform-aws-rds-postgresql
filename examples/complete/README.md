@@ -20,7 +20,7 @@ This example will be very useful for users who are new to a module and want to q
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.13.1 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 3.43.0 |
 
 ## Modules
 

@@ -1,21 +1,21 @@
 locals {
   region      = "us-east-2"
-  environment = "prod"
   name        = "postgresql"
+  family      = "postgres15"
+  vpc_cidr    = "10.20.0.0/16"
+  environment = "prod"
+  storage_type  = "gp3"
+  engine_version = "15.2"
+  instance_class = "db.m5d.large"
+  replica_enable = true
+  replica_count = 1
+  current_identity = data.aws_caller_identity.current.arn
+  allowed_security_groups = ["sg-0a680afd35"]
   additional_tags = {
     Owner      = "Organization_Name"
     Expires    = "Never"
     Department = "Engineering"
   }
-  family   = "postgres15"
-  vpc_cidr = "10.20.0.0/16"
-  storage_type  = "gp3"
-  engine_version = "15.2"
-  current_identity = data.aws_caller_identity.current.arn
-  allowed_security_groups = ["sg-0a680afd35"]
-  instance_class = "db.m5d.large"
-  replica_enable = true
-  replica_count = 1
 }
 
 data "aws_caller_identity" "current" {}

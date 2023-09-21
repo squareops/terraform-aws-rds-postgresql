@@ -2,18 +2,18 @@ locals {
   region         = "us-east-2"
   name           = "postgresql"
   family         = "postgres15"
+  vpc_cidr       = "10.20.0.0/16"
   environment    = "prod"
   engine_version = "15.2"
   instance_class = "db.m5d.large"
-  vpc_cidr = "10.20.0.0/16"
+  storage_type   = "gp3"
+  current_identity = data.aws_caller_identity.current.arn
   allowed_security_groups = ["sg-0a680afd35"]
   additional_tags = {
     Owner      = "Organization_Name"
     Expires    = "Never"
     Department = "Engineering"
   }
-  storage_type = "gp3"
-  current_identity = data.aws_caller_identity.current.arn
 }
 
 data "aws_caller_identity" "current" {}
@@ -24,10 +24,10 @@ module "kms" {
 
   deletion_window_in_days = 7
   description             = "Complete key example showing various configurations available"
-  enable_key_rotation     = false
+  enable_key_rotation     = true
   is_enabled              = true
   key_usage               = "ENCRYPT_DECRYPT"
-  multi_region            = false
+  multi_region            = true
 
   # Policy
   enable_default_policy                  = true
@@ -77,7 +77,7 @@ module "kms" {
   # Aliases
   aliases = ["${local.name}"]
 
-  tags = local.additional_aws_tags
+  tags = local.additional_tags
 }
 
 
@@ -121,7 +121,7 @@ module "rds-pg" {
   cloudwatch_metric_alarms_enabled = true
   alarm_cpu_threshold_percent      = 70
   disk_free_storage_space          = "10000000" # in bytes
-  slack_username                   = ""
-  slack_channel                    = ""
-  slack_webhook_url                = ""
+  slack_username                   = "Admin"
+  slack_channel                    = "postgresql-notification"
+  slack_webhook_url                = "https://hooks/xxxxxxxx"
 }

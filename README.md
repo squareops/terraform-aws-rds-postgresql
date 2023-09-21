@@ -34,6 +34,7 @@ module "rds-pg" {
   replica_enable                   = false
   replica_count                    = 1
   kms_key_arn                      = "arn:aws:kms:region:2222222222:key/f8c8d802-a34b"
+  storage_type                     = "gp3"
   engine_version                   = "15.2"
   instance_class                   = "db.m5.large"
   master_username                  = "pguser"
@@ -54,7 +55,7 @@ module "rds-pg" {
   slack_webhook_url                = "https://hooks/xxxxxxxx"
 }
 ```
-Refer [examples](https://github.com/squareops/terraform-aws-rds-postgresql/tree/main/examples/complete) for more details.
+Refer [examples](https://github.com/squareops/terraform-aws-rds-postgresql/tree/main/examples) for more details.
 
 ## IAM Permissions
 The required IAM permissions to create resources from this module can be found [here](https://github.com/squareops/terraform-aws-rds-postgresql/blob/main/IAM.md)
