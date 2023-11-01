@@ -107,6 +107,7 @@ module "rds-pg" {
   cloudwatch_metric_alarms_enabled = true
   alarm_cpu_threshold_percent      = 70
   disk_free_storage_space          = "10000000" # in bytes
+  slack_notification_enabled       = false
   slack_username                   = "Admin"
   slack_channel                    = "postgresql-notification"
   slack_webhook_url                = "https://hooks/xxxxxxxx"
