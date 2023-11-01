@@ -234,6 +234,12 @@ variable "ok_actions" {
   default     = []
 }
 
+variable "slack_notification_enabled" {
+  type        = bool
+  description = "Whether to enable/disable slack notification."
+  default     = false
+}
+
 variable "slack_webhook_url" {
   description = "The Slack Webhook URL where notifications will be sent."
   default     = ""
