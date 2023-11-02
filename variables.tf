@@ -266,32 +266,32 @@ variable "cw_sns_topic_arn" {
 
 variable "enable_storage_autoscaling" {
   description = "Whether enable storage autoscaling or not"
-  default = true
-  type = bool
+  default     = true
+  type        = bool
 }
 
 variable "max_allocated_storage" {
   description = "The Maximum storage capacity for the database value after autoscaling"
-  default = null
-  type = number
+  default     = null
+  type        = number
 }
 
 variable "storage_type" {
   description = "The storage type for the database storage like gp2,gp3,io1"
-  default = "gp2"
-  type = string
+  default     = "gp2"
+  type        = string
 }
 
 variable "replica_enable" {
   description = "Whether enable replica DB"
-  default = false
-  type = bool
+  default     = false
+  type        = bool
 }
 
 variable "replica_count" {
   description = "The number of replica instance"
-  default = 1
-  type = number
+  default     = 1
+  type        = number
 }
 
 variable "performance_insights_enabled" {

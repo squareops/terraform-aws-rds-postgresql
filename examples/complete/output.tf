@@ -25,7 +25,7 @@ output "instance_username" {
 output "instance_password" {
   description = "Password for accessing the database (Note: Terraform does not track this password after initial creation)."
   value       = module.rds-pg.db_instance_password
-  sensitive = false
+  sensitive   = false
 }
 
 output "security_group" {

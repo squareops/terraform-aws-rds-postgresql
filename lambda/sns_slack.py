@@ -33,7 +33,7 @@ def format_cloudwatch_alarm_message(event):
     return message
 
 def lambda_handler(event, context):
-    url = slack_url  
+    url = slack_url
     msg = {
         "channel": slack_channel,
         "username": slack_user,
@@ -43,7 +43,7 @@ def lambda_handler(event, context):
 
     encoded_msg = json.dumps(msg).encode('utf-8')
     resp = http.request('POST', url, body=encoded_msg)
-    
+
     print({
         "message": msg,
         "status_code": resp.status,
