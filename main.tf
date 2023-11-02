@@ -9,41 +9,41 @@ locals {
 }
 
 module "db" {
-  source                           = "terraform-aws-modules/rds/aws"
-  version                          = "6.1.0"
-  identifier                       = format("%s-%s", var.environment, var.name)
-  db_name                          = var.db_name
-  port                             = var.port
-  engine                           = var.engine
-  username                         = var.master_username
-  password                         = var.manage_master_user_password ? null : random_password.master[0].result
-  multi_az                         = var.multi_az
-  subnet_ids                       = var.subnet_ids
-  kms_key_id                       = var.kms_key_arn
-  instance_class                   = var.instance_class
-  storage_type                     = var.storage_type
-  engine_version                   = var.engine_version
-  allocated_storage                = var.allocated_storage
-  storage_encrypted                = var.storage_encrypted
-  max_allocated_storage = var.enable_storage_autoscaling && var.max_allocated_storage != ""? var.max_allocated_storage : null
-  publicly_accessible              = var.publicly_accessible
+  source                                = "terraform-aws-modules/rds/aws"
+  version                               = "6.1.0"
+  identifier                            = format("%s-%s", var.environment, var.name)
+  db_name                               = var.db_name
+  port                                  = var.port
+  engine                                = var.engine
+  username                              = var.master_username
+  password                              = var.manage_master_user_password ? null : random_password.master[0].result
+  multi_az                              = var.multi_az
+  subnet_ids                            = var.subnet_ids
+  kms_key_id                            = var.kms_key_arn
+  instance_class                        = var.instance_class
+  storage_type                          = var.storage_type
+  engine_version                        = var.engine_version
+  allocated_storage                     = var.allocated_storage
+  storage_encrypted                     = var.storage_encrypted
+  max_allocated_storage                 = var.enable_storage_autoscaling && var.max_allocated_storage != "" ? var.max_allocated_storage : null
+  publicly_accessible                   = var.publicly_accessible
   performance_insights_enabled          = var.performance_insights_enabled
   performance_insights_retention_period = var.performance_insights_retention_period
-  create_db_subnet_group           = var.create_db_subnet_group
-  replicate_source_db              = var.replicate_source_db
-  vpc_security_group_ids           = split(",", module.security_group_rds.security_group_id)
-  skip_final_snapshot              = var.skip_final_snapshot
-  snapshot_identifier              = var.snapshot_identifier
-  maintenance_window               = var.maintenance_window
-  backup_window                    = var.backup_window
-  apply_immediately                = var.apply_immediately
-  backup_retention_period          = var.backup_retention_period
-  manage_master_user_password      = var.manage_master_user_password ? true : false
-  monitoring_interval              = "30"
-  monitoring_role_name             = format("%s-%s-RDSPostgresql", var.name, var.environment)
-  create_monitoring_role           = true
-  final_snapshot_identifier_prefix = var.final_snapshot_identifier_prefix
-  enabled_cloudwatch_logs_exports  = ["postgresql"]
+  create_db_subnet_group                = var.create_db_subnet_group
+  replicate_source_db                   = var.replicate_source_db
+  vpc_security_group_ids                = split(",", module.security_group_rds.security_group_id)
+  skip_final_snapshot                   = var.skip_final_snapshot
+  snapshot_identifier                   = var.snapshot_identifier
+  maintenance_window                    = var.maintenance_window
+  backup_window                         = var.backup_window
+  apply_immediately                     = var.apply_immediately
+  backup_retention_period               = var.backup_retention_period
+  manage_master_user_password           = var.manage_master_user_password ? true : false
+  monitoring_interval                   = "30"
+  monitoring_role_name                  = format("%s-%s-RDSPostgresql", var.name, var.environment)
+  create_monitoring_role                = true
+  final_snapshot_identifier_prefix      = var.final_snapshot_identifier_prefix
+  enabled_cloudwatch_logs_exports       = ["postgresql"]
   tags = merge(
     { "Name" = format("%s-%s", var.environment, var.name) },
     local.tags,
@@ -62,14 +62,14 @@ module "db" {
 module "db_replica" {
   source                           = "terraform-aws-modules/rds/aws"
   version                          = "6.1.0"
-  count = var.replica_enable ? var.replica_count : 0
+  count                            = var.replica_enable ? var.replica_count : 0
   identifier                       = format("%s-%s-%s", var.environment, var.name, "replica")
   port                             = var.port
   engine                           = var.engine
   multi_az                         = var.multi_az
   kms_key_id                       = var.kms_key_arn
   instance_class                   = var.instance_class
-  storage_type = var.storage_type
+  storage_type                     = var.storage_type
   engine_version                   = var.engine_version
   storage_encrypted                = var.storage_encrypted
   publicly_accessible              = var.publicly_accessible
@@ -82,9 +82,9 @@ module "db_replica" {
   apply_immediately                = var.apply_immediately
   backup_retention_period          = var.backup_retention_period
   monitoring_interval              = "30"
-  monitoring_role_arn                   = module.db.enhanced_monitoring_iam_role_arn
+  monitoring_role_arn              = module.db.enhanced_monitoring_iam_role_arn
   create_monitoring_role           = false
-  create_cloudwatch_log_group            = false
+  create_cloudwatch_log_group      = false
   final_snapshot_identifier_prefix = var.final_snapshot_identifier_prefix
   enabled_cloudwatch_logs_exports  = ["postgresql"]
   tags = merge(
@@ -100,7 +100,7 @@ module "db_replica" {
 
   # Database Deletion Protection
   deletion_protection = var.deletion_protection
-  depends_on = [ module.db ]
+  depends_on          = [module.db]
 }
 
 resource "aws_security_group_rule" "default_ingress" {
@@ -219,10 +219,10 @@ resource "aws_kms_ciphertext" "slack_url" {
 }
 
 resource "aws_sns_topic" "slack_topic" {
-  count             = var.cloudwatch_metric_alarms_enabled ? 1 : 0
-  depends_on        = [module.db]
-  name              = format("%s-%s-%s", var.environment, var.name, "slack-topic")
-  delivery_policy   = <<EOF
+  count           = var.cloudwatch_metric_alarms_enabled ? 1 : 0
+  depends_on      = [module.db]
+  name            = format("%s-%s-%s", var.environment, var.name, "slack-topic")
+  delivery_policy = <<EOF
 {
   "http": {
     "defaultHealthyRetryPolicy": {
@@ -244,7 +244,7 @@ EOF
 }
 
 data "archive_file" "lambdazip" {
-  count             = var.slack_notification_enabled ? 1 : 0
+  count       = var.slack_notification_enabled ? 1 : 0
   type        = "zip"
   output_path = "${path.module}/lambda/sns_slack.zip"
 
@@ -253,7 +253,7 @@ data "archive_file" "lambdazip" {
 
 
 module "cw_sns_slack" {
-  count             = var.slack_notification_enabled ? 1 : 0
+  count  = var.slack_notification_enabled ? 1 : 0
   source = "./lambda"
 
   name          = format("%s-%s-%s", var.environment, var.name, "sns-slack")
@@ -275,7 +275,7 @@ module "cw_sns_slack" {
 }
 
 resource "aws_sns_topic_subscription" "slack-endpoint" {
-  count             = var.slack_notification_enabled ? 1 : 0
+  count                  = var.slack_notification_enabled ? 1 : 0
   endpoint               = module.cw_sns_slack[0].arn
   protocol               = "lambda"
   endpoint_auto_confirms = true
@@ -283,7 +283,7 @@ resource "aws_sns_topic_subscription" "slack-endpoint" {
 }
 
 resource "aws_lambda_permission" "sns_lambda_slack_invoke" {
-  count             = var.slack_notification_enabled ? 1 : 0
+  count         = var.slack_notification_enabled ? 1 : 0
   statement_id  = "sns_slackAllowExecutionFromSNS"
   action        = "lambda:InvokeFunction"
   function_name = module.cw_sns_slack[0].arn
@@ -300,14 +300,14 @@ resource "aws_secretsmanager_secret" "secret_master_db" {
   )
 }
 
-resource "random_password" "master"{
-  count = var.manage_master_user_password ? 0 : 1
-  length           = var.random_password_length
-  special          = false
+resource "random_password" "master" {
+  count   = var.manage_master_user_password ? 0 : 1
+  length  = var.random_password_length
+  special = false
 }
 
 resource "aws_secretsmanager_secret_version" "rds_credentials" {
-  count = var.manage_master_user_password ? 0 : 1
+  count         = var.manage_master_user_password ? 0 : 1
   secret_id     = aws_secretsmanager_secret.secret_master_db.id
   secret_string = <<EOF
 {

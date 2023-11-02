@@ -1,15 +1,15 @@
 locals {
-  region      = "us-east-2"
-  name        = "postgresql"
-  family      = "postgres15"
-  vpc_cidr    = "10.20.0.0/16"
-  environment = "prod"
-  storage_type  = "gp3"
-  engine_version = "15.2"
-  instance_class = "db.m5d.large"
-  replica_enable = true
-  replica_count = 1
-  current_identity = data.aws_caller_identity.current.arn
+  region                  = "us-east-2"
+  name                    = "postgresql"
+  family                  = "postgres15"
+  vpc_cidr                = "10.20.0.0/16"
+  environment             = "prod"
+  storage_type            = "gp3"
+  engine_version          = "15.2"
+  instance_class          = "db.m5d.large"
+  replica_enable          = true
+  replica_count           = 1
+  current_identity        = data.aws_caller_identity.current.arn
   allowed_security_groups = ["sg-0a680afd35"]
   additional_tags = {
     Owner      = "Organization_Name"
@@ -32,11 +32,11 @@ module "kms" {
   multi_region            = true
 
   # Policy
-  enable_default_policy                  = true
-  key_owners                             = [local.current_identity]
-  key_administrators                     = [local.current_identity]
-  key_users                              = [local.current_identity]
-  key_service_users                      = [local.current_identity]
+  enable_default_policy = true
+  key_owners            = [local.current_identity]
+  key_administrators    = [local.current_identity]
+  key_users             = [local.current_identity]
+  key_service_users     = [local.current_identity]
   key_statements = [
     {
       sid = "CloudWatchLogs"
@@ -66,17 +66,17 @@ module "kms" {
 
 
 module "vpc" {
-  source                = "squareops/vpc/aws"
-  name                  = local.name
-  vpc_cidr              = local.vpc_cidr
-  environment           = local.environment
-  availability_zones    = ["us-east-2a", "us-east-2b"]
-  public_subnet_enabled = true
-  auto_assign_public_ip = true
-  intra_subnet_enabled                            = false
-  private_subnet_enabled                          = true
-  one_nat_gateway_per_az                          = false
-  database_subnet_enabled                         = true
+  source                  = "squareops/vpc/aws"
+  name                    = local.name
+  vpc_cidr                = local.vpc_cidr
+  environment             = local.environment
+  availability_zones      = ["us-east-2a", "us-east-2b"]
+  public_subnet_enabled   = true
+  auto_assign_public_ip   = true
+  intra_subnet_enabled    = false
+  private_subnet_enabled  = true
+  one_nat_gateway_per_az  = false
+  database_subnet_enabled = true
 }
 
 module "rds-pg" {
