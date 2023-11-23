@@ -9,6 +9,7 @@ locals {
   storage_type            = "gp3"
   current_identity        = data.aws_caller_identity.current.arn
   allowed_security_groups = ["sg-0a680afd35"]
+  custom_user_password    = ""
   additional_tags = {
     Owner      = "Organization_Name"
     Expires    = "Never"
@@ -96,7 +97,8 @@ module "vpc" {
 }
 
 module "rds-pg" {
-  source                           = "squareops/rds-postgresql/aws"
+  source = "../../"
+  #source                           = "squareops/rds-postgresql/aws"
   name                             = local.name
   db_name                          = "postgres"
   multi_az                         = "true"
@@ -125,4 +127,5 @@ module "rds-pg" {
   slack_username                   = "Admin"
   slack_channel                    = "postgresql-notification"
   slack_webhook_url                = "https://hooks/xxxxxxxx"
+  custom_user_password             = local.custom_user_password
 }

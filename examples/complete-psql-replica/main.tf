@@ -10,6 +10,7 @@ locals {
   replica_enable          = true
   replica_count           = 1
   current_identity        = data.aws_caller_identity.current.arn
+  custom_user_password    = ""
   allowed_security_groups = ["sg-0a680afd35"]
   additional_tags = {
     Owner      = "Organization_Name"
@@ -111,4 +112,5 @@ module "rds-pg" {
   slack_username                   = "Admin"
   slack_channel                    = "postgresql-notification"
   slack_webhook_url                = "https://hooks/xxxxxxxx"
+  custom_user_password             = local.custom_user_password
 }

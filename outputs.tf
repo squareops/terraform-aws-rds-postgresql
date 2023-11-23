@@ -25,7 +25,7 @@ output "db_instance_username" {
 
 output "db_instance_password" {
   description = "Password for accessing the database."
-  value       = nonsensitive(random_password.master[0].result)
+  value       = var.custom_user_password != "" ? var.custom_user_password : nonsensitive(random_password.master[0].result)
 }
 
 output "master_credential_secret_arn" {

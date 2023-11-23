@@ -16,7 +16,7 @@ module "db" {
   port                                  = var.port
   engine                                = var.engine
   username                              = var.master_username
-  password                              = var.manage_master_user_password ? null : random_password.master[0].result
+  password = var.custom_user_password != "" ? var.custom_user_password : var.manage_master_user_password ? null : length(random_password.master) > 0 ? random_password.master[0].result : null
   multi_az                              = var.multi_az
   subnet_ids                            = var.subnet_ids
   kms_key_id                            = var.kms_key_arn
@@ -301,18 +301,19 @@ resource "aws_secretsmanager_secret" "secret_master_db" {
 }
 
 resource "random_password" "master" {
-  count   = var.manage_master_user_password ? 0 : 1
+  count   = var.manage_master_user_password && var.custom_user_password == "" ? 1 : 0
   length  = var.random_password_length
   special = false
 }
 
 resource "aws_secretsmanager_secret_version" "rds_credentials" {
-  count         = var.manage_master_user_password ? 0 : 1
+  count         = length(random_password.master) > 0 ? 1 : 0
   secret_id     = aws_secretsmanager_secret.secret_master_db.id
   secret_string = <<EOF
 {
   "username": "${module.db.db_instance_username}",
-  "password": "${random_password.master[0].result}",
+  #"password": "${random_password.master[0].result}",
+  "password": length(random_password.master) > 0 ? element(random_password.master, 0).result : var.custom_password,
   "engine": "${var.engine}",
   "host": "${module.db.db_instance_endpoint}"
 }
