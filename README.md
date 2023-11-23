@@ -53,6 +53,7 @@ module "rds-pg" {
   slack_username                   = "John"
   slack_channel                    = "skaf-dev"
   slack_webhook_url                = "https://hooks/xxxxxxxx"
+  custom_user_password             = "postgresqlpasswd"
 }
 ```
 Refer [examples](https://github.com/squareops/terraform-aws-rds-postgresql/tree/main/examples) for more details.
@@ -121,6 +122,7 @@ The required IAM permissions to create resources from this module can be found [
 | <a name="input_cloudwatch_metric_alarms_enabled"></a> [cloudwatch\_metric\_alarms\_enabled](#input\_cloudwatch\_metric\_alarms\_enabled) | Boolean flag to enable/disable CloudWatch metrics alarms | `bool` | `false` | no |
 | <a name="input_create_db_subnet_group"></a> [create\_db\_subnet\_group](#input\_create\_db\_subnet\_group) | Whether to create a database subnet group | `bool` | `true` | no |
 | <a name="input_create_security_group"></a> [create\_security\_group](#input\_create\_security\_group) | Whether to create a security group for the database | `bool` | `true` | no |
+| <a name="input_custom_user_password"></a> [custom\_user\_password](#input\_custom\_user\_password) | Custom password for the RDS master user | `string` | `""` | no |
 | <a name="input_cw_sns_topic_arn"></a> [cw\_sns\_topic\_arn](#input\_cw\_sns\_topic\_arn) | The username to use when sending notifications to Slack. | `string` | `""` | no |
 | <a name="input_db_name"></a> [db\_name](#input\_db\_name) | The name of the automatically created database on cluster creation | `string` | `""` | no |
 | <a name="input_deletion_protection"></a> [deletion\_protection](#input\_deletion\_protection) | Specifies whether accidental deletion protection is enabled | `bool` | `true` | no |

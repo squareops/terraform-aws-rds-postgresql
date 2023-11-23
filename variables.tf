@@ -311,4 +311,3 @@ variable "custom_user_password" {
   default     = ""
   type        = string
 }
-

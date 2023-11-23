@@ -16,7 +16,7 @@ module "db" {
   port                                  = var.port
   engine                                = var.engine
   username                              = var.master_username
-  password = var.custom_user_password != "" ? var.custom_user_password : var.manage_master_user_password ? null : length(random_password.master) > 0 ? random_password.master[0].result : null
+  password                              = var.custom_user_password != "" ? var.custom_user_password : var.manage_master_user_password ? null : length(random_password.master) > 0 ? random_password.master[0].result : null
   multi_az                              = var.multi_az
   subnet_ids                            = var.subnet_ids
   kms_key_id                            = var.kms_key_arn
