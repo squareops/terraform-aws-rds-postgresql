@@ -16,7 +16,7 @@ module "db" {
   port                                  = var.port
   engine                                = var.engine
   username                              = var.master_username
-  password                              = var.manage_master_user_password ? null : random_password.master[0].result
+  password                              = var.custom_user_password != "" ? var.custom_user_password : var.manage_master_user_password ? null : length(random_password.master) > 0 ? random_password.master[0].result : null
   multi_az                              = var.multi_az
   subnet_ids                            = var.subnet_ids
   kms_key_id                            = var.kms_key_arn
@@ -150,6 +150,33 @@ module "security_group_rds" {
     { "Name" = format("%s-%s-%s", var.environment, var.name, "rds-sg") },
     local.tags,
   )
+}
+
+resource "aws_secretsmanager_secret" "secret_master_db" {
+  name = format("%s/%s/%s", var.environment, var.name, "rds-postgresql-pass")
+  tags = merge(
+    { "Name" = format("%s/%s/%s", var.environment, var.name, "rds-mysql-pass") },
+    local.tags,
+  )
+}
+
+resource "random_password" "master" {
+  count   = var.manage_master_user_password ? 0 : var.custom_user_password == "" ? 1 : 0
+  length  = var.random_password_length
+  special = false
+}
+
+resource "aws_secretsmanager_secret_version" "rds_credentials" {
+  count         = length(random_password.master) > 0 ? 1 : 0
+  secret_id     = aws_secretsmanager_secret.secret_master_db.id
+  secret_string = <<EOF
+{
+  "username": "${module.db.db_instance_username}",
+  "password": length(random_password.master) > 0 ? element(random_password.master, 0).result : var.custom_password,
+  "engine": "${var.engine}",
+  "host": "${module.db.db_instance_endpoint}"
+}
+EOF
 }
 
 # Cloudwatch alarms
@@ -289,32 +316,4 @@ resource "aws_lambda_permission" "sns_lambda_slack_invoke" {
   function_name = module.cw_sns_slack[0].arn
   principal     = "sns.amazonaws.com"
   source_arn    = aws_sns_topic.slack_topic[0].arn
-}
-
-
-resource "aws_secretsmanager_secret" "secret_master_db" {
-  name = format("%s/%s/%s", var.environment, var.name, "rds-postgresql-pass")
-  tags = merge(
-    { "Name" = format("%s/%s/%s", var.environment, var.name, "rds-mysql-pass") },
-    local.tags,
-  )
-}
-
-resource "random_password" "master" {
-  count   = var.manage_master_user_password ? 0 : 1
-  length  = var.random_password_length
-  special = false
-}
-
-resource "aws_secretsmanager_secret_version" "rds_credentials" {
-  count         = var.manage_master_user_password ? 0 : 1
-  secret_id     = aws_secretsmanager_secret.secret_master_db.id
-  secret_string = <<EOF
-{
-  "username": "${module.db.db_instance_username}",
-  "password": "${random_password.master[0].result}",
-  "engine": "${var.engine}",
-  "host": "${module.db.db_instance_endpoint}"
-}
-EOF
 }
