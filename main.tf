@@ -161,7 +161,7 @@ resource "aws_secretsmanager_secret" "secret_master_db" {
 }
 
 resource "random_password" "master" {
-  count   = var.manage_master_user_password && var.custom_user_password == "" ? 1 : 0
+  count   = var.manage_master_user_password ? 0 : var.custom_user_password == "" ? 1 : 0
   length  = var.random_password_length
   special = false
 }
