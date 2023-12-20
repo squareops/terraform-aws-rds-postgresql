@@ -240,7 +240,7 @@ resource "aws_kms_key" "this" {
 }
 
 resource "aws_kms_ciphertext" "slack_url" {
-  count     = var.cloudwatch_metric_alarms_enabled ? 1 : 0
+  count     = var.slack_notification_enabled && var.cloudwatch_metric_alarms_enabled ? 1 : 0
   plaintext = var.slack_webhook_url
   key_id    = aws_kms_key.this[0].arn
 }
