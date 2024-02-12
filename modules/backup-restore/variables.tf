@@ -96,9 +96,3 @@ variable "cluster_name" {
   default     = ""
   description = "Specifies the name of the EKS cluster to deploy the PostgreSQL application on."
 }
-
-variable "s3_presigned_url"{
-  description = "provide s3 presigned url"
-  default = ""
-  type = string
-}
