@@ -1,0 +1,43 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: postgres-backup
+spec:
+  schedule: {{ .Values.backup.cron_for_full_backup |  quote }}
+  concurrencyPolicy: Forbid
+  suspend: false
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          affinity: {{ .Values.affinity | toYaml | nindent 10 }}
+          restartPolicy: OnFailure
+          imagePullSecrets:
+          - name: regcred
+          serviceAccountName: sa-postgres-backup
+          containers:
+          - name: postgres-backup
+            image: amanravi12/postgres-backup:v7
+            imagePullPolicy: Always
+            env:
+            - name: POSTGRES_HOST
+              value: {{ .Values.backup.database_endpoint }}
+            - name: POSTGRES_PORT
+              value: "{{ .Values.backup.port}}"
+            - name: POSTGRES_USER
+              value: {{ .Values.backup.database_user }}
+            - name: PGPASSWORD
+              value: {{ .Values.backup.database_password }}
+            - name: POSTGRES_BUCKET_URI
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-bucket-uri
+                  key: POSTGRES_BUCKET_URI
+            - name: BUCKET_PROVIDER
+              value:  {{ .Values.backup.provider }}
+            - name: AWS_DEFAULT_REGION
+              value: {{ .Values.backup.aws_default_region }}
+            resources: {{ .Values.backupjob.resources | toYaml | nindent 12 }}

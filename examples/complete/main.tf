@@ -7,9 +7,11 @@ locals {
   engine_version          = "15.2"
   instance_class          = "db.m5d.large"
   storage_type            = "gp3"
+  create_namespace        = true
+  namespace               = "postgres"
   current_identity        = data.aws_caller_identity.current.arn
   allowed_security_groups = ["sg-0a680afd35"]
-  custom_user_password    = ""
+  custom_user_password    = "Amanravi12"
   additional_tags = {
     Owner      = "Organization_Name"
     Expires    = "Never"
@@ -109,6 +111,7 @@ module "rds-pg" {
   storage_type                     = local.storage_type
   engine_version                   = local.engine_version
   instance_class                   = local.instance_class
+  allowed_security_groups          = local.allowed_security_groups
   master_username                  = "pguser"
   allocated_storage                = "20"
   max_allocated_storage            = 120
@@ -127,4 +130,35 @@ module "rds-pg" {
   slack_channel                    = "postgresql-notification"
   slack_webhook_url                = "https://hooks/xxxxxxxx"
   custom_user_password             = local.custom_user_password
+}
+
+
+module "backup_restore" {
+  depends_on                = [module.rds-pg]
+  source                    = "../../modules/backup-restore"
+  port                      = split(":", module.rds-pg.db_instance_endpoint)[1]
+  create_namespace          = local.create_namespace
+  namespace                 = local.namespace
+  cluster_name              = "prod-eks"
+  postgresql_backup_enabled = false
+  bucket_provider_type      = "s3"
+  postgres_backup_config = {
+    db_username          = module.rds-pg.db_instance_username
+    db_password          = module.rds-pg.db_instance_password
+    s3_bucket_region     = "us-east-1"                
+    cron_for_full_backup = "*/2 * * * *"               
+    bucket_uri           = "s3://postgres-backup-file" 
+    db_endpoint          = replace(module.rds-pg.db_instance_endpoint, ":5432", "")
+  }
+
+  postgres_restore_enabled = false
+  postgres_restore_config = {
+    db_endpoint      = replace(module.rds-pg.db_instance_endpoint, ":5432", "")
+    db_port          = split(":", module.rds-pg.db_instance_endpoint)[1]
+    db_username      = module.rds-pg.db_instance_username
+    db_password      = module.rds-pg.db_instance_password
+    bucket_uri       = "s3://postgres-backup-file/"
+    s3_bucket_region = "us-east-1"           
+
+  }
 }
