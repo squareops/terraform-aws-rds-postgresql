@@ -7,6 +7,7 @@ locals {
   engine_version          = "15.2"
   instance_class          = "db.m5d.large"
   storage_type            = "gp3"
+  multi_az_enabled        = false
   create_namespace        = true
   namespace               = "postgres"
   current_identity        = data.aws_caller_identity.current.arn
@@ -102,7 +103,7 @@ module "rds-pg" {
   source                           = "squareops/rds-postgresql/aws"
   name                             = local.name
   db_name                          = "postgres"
-  multi_az                         = "true"
+  multi_az                         = local.multi_az_enabled
   family                           = local.family
   vpc_id                           = module.vpc.vpc_id
   subnet_ids                       = module.vpc.database_subnets ## db subnets
@@ -112,6 +113,7 @@ module "rds-pg" {
   engine_version                   = local.engine_version
   instance_class                   = local.instance_class
   allowed_security_groups          = local.allowed_security_groups
+  availability_zone                = local.multi_az_enabled ? null : "us-east-1a"
   master_username                  = "pguser"
   allocated_storage                = "20"
   max_allocated_storage            = 120
