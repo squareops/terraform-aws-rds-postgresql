@@ -11,7 +11,7 @@ locals {
   namespace               = "postgres"
   current_identity        = data.aws_caller_identity.current.arn
   allowed_security_groups = ["sg-0a680afd35"]
-  custom_user_password    = "Amanravi12"
+  custom_user_password    = ""
   additional_tags = {
     Owner      = "Organization_Name"
     Expires    = "Never"
