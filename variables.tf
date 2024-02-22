@@ -6,6 +6,12 @@ variable "additional_tags" {
   }
 }
 
+variable "availability_zone" {
+  description = "The Availability Zone of the RDS instance"
+  type        = string
+  default     = null
+}
+
 variable "allocated_storage" {
   description = "The allocated storage capacity for the database in gibibytes (GiB)"
   default     = 20
