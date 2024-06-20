@@ -4,7 +4,9 @@ locals {
   family                  = "postgres15"
   vpc_cidr                = "10.20.0.0/16"
   environment             = "prod"
-  engine_version          = "15.2"
+  create_namespace        = true
+  namespace               = "postgres"
+  engine_version          = "15.4"
   instance_class          = "db.m5d.large"
   storage_type            = "gp3"
   current_identity        = data.aws_caller_identity.current.arn
@@ -22,7 +24,7 @@ data "aws_region" "current" {}
 
 module "kms" {
   source = "terraform-aws-modules/kms/aws"
-
+  version = "~> 1.0"
   deletion_window_in_days = 7
   description             = "Complete key example showing various configurations available"
   enable_key_rotation     = true
@@ -97,7 +99,7 @@ module "vpc" {
 }
 
 module "rds-pg" {
-  source                           = "squareops/rds-postgresql/aws"
+  source                           = "../.."
   name                             = local.name
   db_name                          = "postgres"
   multi_az                         = "true"
@@ -127,4 +129,21 @@ module "rds-pg" {
   slack_channel                    = "postgresql-notification"
   slack_webhook_url                = "https://hooks/xxxxxxxx"
   custom_user_password             = local.custom_user_password
+  cluster_name                     = "test-atmosly-task-ipv4"
+  namespace                        = local.namespace
+  create_namespace                 = local.create_namespace
+  postgresdb_backup_enabled = false
+  postgresdb_backup_config = {
+    postgres_database_name  = "postgres" # which database backup you want
+    s3_bucket_region     = "us-west-1" 
+    cron_for_full_backup = "*/3 * * * *" 
+    bucket_uri           = "s3://rdstaskbacupbucket/"
+  }
+  postgresdb_restore_enabled = false
+  postgresdb_restore_config = {
+    bucket_uri       = "s3://rdstaskbacupbucket//backup_20240620055848.dump" 
+    backup_file_name = "backup_20240620055848.dump" #Give only .sql or .zip file for restore
+    s3_bucket_region = "us-west-1"
+    DB_NAME          = "postgres" # which db to restore backup file
+  }
 }
