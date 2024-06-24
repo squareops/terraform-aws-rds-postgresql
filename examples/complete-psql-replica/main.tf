@@ -4,8 +4,6 @@ locals {
   family                  = "postgres15"
   vpc_cidr                = "10.20.0.0/16"
   environment             = "prod"
-  create_namespace        = true
-  namespace               = "postgres"
   storage_type            = "gp3"
   engine_version          = "15.2"
   instance_class          = "db.m5d.large"
@@ -83,7 +81,7 @@ module "vpc" {
 }
 
 module "rds-pg" {
-  source                           = "../.."
+  source                           = "squareops/rds-postgresql/aws"
   name                             = local.name
   db_name                          = "postgres"
   family                           = local.family
@@ -115,23 +113,4 @@ module "rds-pg" {
   slack_channel                    = "postgresql-notification"
   slack_webhook_url                = "https://hooks/xxxxxxxx"
   custom_user_password             = local.custom_user_password
-  #if you want backup and restore then you have to create your cluster with rds vpc , subnet, key_arn. 
-  #And allow cluster security group in rds security group
-  cluster_name                     = "cluster-name" 
-  namespace                        = local.namespace
-  create_namespace                 = local.create_namespace
-  postgresdb_backup_enabled = false
-  postgresdb_backup_config = {
-    postgres_database_name  = "" # which database backup you want
-    s3_bucket_region     = "" #s3 bucket region
-    cron_for_full_backup = "*/3 * * * *" 
-    bucket_uri           = "s3://xyz" #s3 bucket uri
-  }
-  postgresdb_restore_enabled = false
-  postgresdb_restore_config = {
-    bucket_uri       = "s3://xyz" #s3 bucket uri which have dackup dump file
-    backup_file_name = "abc.dump" #Give only .sql or .zip file for restore
-    s3_bucket_region = "" # bucket region
-    DB_NAME          = "" # which db to restore backup file
-  }
 }
