@@ -6,5 +6,4 @@
 *.tfvars
 *.pem
 vars
-modules/db-backup-restore/backup/.helmignore
-modules/db-backup-restore/restore/.helmignore
+*.helmignore
