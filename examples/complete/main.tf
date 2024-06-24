@@ -1,5 +1,5 @@
 locals {
-  region                  = "us-east-2"
+  region                  = "us-west-2"
   name                    = "postgresql"
   family                  = "postgres15"
   vpc_cidr                = "10.20.0.0/16"
@@ -99,12 +99,12 @@ module "vpc" {
 }
 
 module "rds-pg" {
-  source                           = "../.."
+  source                           = "squareops/rds-postgresql/aws"
   name                             = local.name
   db_name                          = "postgres"
   multi_az                         = "true"
   family                           = local.family
-  vpc_id                           = module.vpc.vpc_id
+  vpc_id                           = module.vpc.vpc_id 
   subnet_ids                       = module.vpc.database_subnets ## db subnets
   environment                      = local.environment
   kms_key_arn                      = module.kms.key_arn
@@ -129,21 +129,23 @@ module "rds-pg" {
   slack_channel                    = "postgresql-notification"
   slack_webhook_url                = "https://hooks/xxxxxxxx"
   custom_user_password             = local.custom_user_password
-  cluster_name                     = "test-atmosly-task-ipv4"
+  #if you want backup and restore then you have to provide you cluster vpc ip, subnet, key_arn also. 
+  #And allow cluster security group in rds security group
+  cluster_name                     = "cluster-name" 
   namespace                        = local.namespace
   create_namespace                 = local.create_namespace
   postgresdb_backup_enabled = false
   postgresdb_backup_config = {
-    postgres_database_name  = "postgres" # which database backup you want
-    s3_bucket_region     = "us-west-1" 
+    postgres_database_name  = "" # which database backup you want
+    s3_bucket_region     = "" #s3 bucket region
     cron_for_full_backup = "*/3 * * * *" 
-    bucket_uri           = "s3://rdstaskbacupbucket/"
+    bucket_uri           = "s3://xyz" #s3 bucket uri
   }
   postgresdb_restore_enabled = false
   postgresdb_restore_config = {
-    bucket_uri       = "s3://rdstaskbacupbucket//backup_20240620055848.dump" 
-    backup_file_name = "backup_20240620055848.dump" #Give only .sql or .zip file for restore
-    s3_bucket_region = "us-west-1"
-    DB_NAME          = "postgres" # which db to restore backup file
+    bucket_uri       = "s3://xyz" #s3 bucket uri which have dackup dump file
+    backup_file_name = "abc.dump" #Give only .sql or .zip file for restore
+    s3_bucket_region = "" # bucket region
+    DB_NAME          = "" # which db to restore backup file
   }
 }
