@@ -129,7 +129,7 @@ module "rds-pg" {
   slack_channel                    = "postgresql-notification"
   slack_webhook_url                = "https://hooks/xxxxxxxx"
   custom_user_password             = local.custom_user_password
-  #if you want backup and restore then you have to provide you cluster vpc ip, subnet, key_arn also. 
+  #if you want backup and restore then you have to create your cluster with rds vpc , subnet, key_arn. 
   #And allow cluster security group in rds security group
   cluster_name                     = "cluster-name" 
   namespace                        = local.namespace
