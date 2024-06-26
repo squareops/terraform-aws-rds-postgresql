@@ -327,19 +327,19 @@ module "backup_restore" {
   postgresdb_backup_enabled = var.postgresdb_backup_enabled
   postgresdb_backup_config = {
     db_username          = var.master_username
-    db_password          =  var.custom_user_password != "" ? var.custom_user_password : nonsensitive(random_password.master[0].result)
+    db_password          = nonsensitive(random_password.master[0].result)
     postgres_database_name  = var.postgresdb_backup_config.postgres_database_name
     s3_bucket_region     = var.postgresdb_backup_config.s3_bucket_region            
     cron_for_full_backup = var.postgresdb_backup_config.cron_for_full_backup            
     bucket_uri           = var.postgresdb_backup_config.bucket_uri
-    db_endpoint          = replace(module.db.db_instance_endpoint, ":5432", "")
+    db_endpoint          = replace(var.replica_enable ? module.db_replica[0].db_instance_endpoint : module.db.db_instance_endpoint, ":5432", "")
   }
 
   postgresdb_restore_enabled = var.postgresdb_restore_enabled
   postgresdb_restore_config  = {
-    db_endpoint      = replace(module.db.db_instance_endpoint, ":5432", "")
+    db_endpoint      = replace(var.replica_enable ? module.db_replica[0].db_instance_endpoint : module.db.db_instance_endpoint, ":5432", "")
     db_username      = var.master_username
-    db_password      =  var.custom_user_password != "" ? var.custom_user_password : nonsensitive(random_password.master[0].result)
+    db_password      = nonsensitive(random_password.master[0].result)
     bucket_uri       = var.postgresdb_restore_config.bucket_uri                    
     s3_bucket_region = var.postgresdb_restore_config.s3_bucket_region 
     DB_NAME          = var.postgresdb_restore_config.DB_NAME,  
