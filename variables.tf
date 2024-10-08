@@ -311,3 +311,62 @@ variable "custom_user_password" {
   default     = ""
   type        = string
 }
+
+variable "create_namespace" {
+  type        = string
+  description = "Specify whether or not to create the namespace if it does not already exist. Set it to true to create the namespace."
+  default     = false
+}
+
+variable "namespace" {
+  type        = string
+  default     = "postgresdb"
+  description = "Name of the Kubernetes namespace where the MYSQL deployment will be deployed."
+}
+
+variable "postgresdb_backup_enabled" {
+  type        = bool
+  default     = false
+  description = "Specifies whether to enable backups for MySQL database."
+}
+
+variable "postgresdb_restore_enabled" {
+  type        = bool
+  default     = false
+  description = "Specifies whether to enable restoring dump to the MySQL database."
+}
+
+
+variable "bucket_provider_type" {
+  type        = string
+  default     = "s3"
+  description = "Choose what type of provider you want (s3, gcs)"
+}
+
+variable "postgresdb_backup_config" {
+  type = map(string)
+  default = {
+    bucket_uri           = ""
+    s3_bucket_region     = ""
+    cron_for_full_backup = ""
+    postgres_database_name  = ""
+    # db_endpoint=""
+  }
+  description = "configuration options for MySQL database backups. It includes properties such as the S3 bucket URI, the S3 bucket region, and the cron expression for full backups."
+}
+
+variable "postgresdb_restore_config" {
+  type = any
+  default = {
+    bucket_uri       = ""
+    file_name        = ""
+    s3_bucket_region = ""
+  }
+  description = "Configuration options for restoring dump to the MySQL database."
+}
+
+variable "cluster_name" {
+  type        = string
+  default     = ""
+  description = "Specifies the name of the EKS cluster to deploy the MySQL application on."
+}

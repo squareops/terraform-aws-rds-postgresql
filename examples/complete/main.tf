@@ -1,10 +1,12 @@
 locals {
-  region                  = "us-east-2"
+  region                  = "us-west-2"
   name                    = "postgresql"
   family                  = "postgres15"
   vpc_cidr                = "10.20.0.0/16"
   environment             = "prod"
-  engine_version          = "15.2"
+  create_namespace        = true
+  namespace               = "postgres"
+  engine_version          = "15.4"
   instance_class          = "db.m5d.large"
   storage_type            = "gp3"
   current_identity        = data.aws_caller_identity.current.arn
@@ -22,7 +24,7 @@ data "aws_region" "current" {}
 
 module "kms" {
   source = "terraform-aws-modules/kms/aws"
-
+  version = "~> 1.0"
   deletion_window_in_days = 7
   description             = "Complete key example showing various configurations available"
   enable_key_rotation     = true
@@ -102,7 +104,7 @@ module "rds-pg" {
   db_name                          = "postgres"
   multi_az                         = "true"
   family                           = local.family
-  vpc_id                           = module.vpc.vpc_id
+  vpc_id                           = module.vpc.vpc_id 
   subnet_ids                       = module.vpc.database_subnets ## db subnets
   environment                      = local.environment
   kms_key_arn                      = module.kms.key_arn
@@ -127,4 +129,23 @@ module "rds-pg" {
   slack_channel                    = "postgresql-notification"
   slack_webhook_url                = "https://hooks/xxxxxxxx"
   custom_user_password             = local.custom_user_password
+  #if you want backup and restore then you have to create your cluster with rds vpc id , private subnets, kms key. 
+  #And allow cluster security group in rds security group
+  # cluster_name                     = "cluster-name" 
+  # namespace                        = local.namespace
+  # create_namespace                 = local.create_namespace
+  # postgresdb_backup_enabled = false
+  # postgresdb_backup_config = {
+  #   postgres_database_name  = "" # which database backup you want
+  #   s3_bucket_region     = "" #s3 bucket region
+  #   cron_for_full_backup = "*/3 * * * *" 
+  #   bucket_uri           = "s3://xyz" #s3 bucket uri
+  # }
+  # postgresdb_restore_enabled = false
+  # postgresdb_restore_config = {
+  #   bucket_uri       = "s3://xyz" #s3 bucket uri which have dackup dump file
+  #   backup_file_name = "abc.dump" #Give only .sql or .zip file for restore
+  #   s3_bucket_region = "" # bucket region
+  #   DB_NAME          = "" # which db to restore backup file
+  # }
 }

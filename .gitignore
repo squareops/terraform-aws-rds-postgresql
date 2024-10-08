@@ -6,3 +6,4 @@
 *.tfvars
 *.pem
 vars
+.helmignore
