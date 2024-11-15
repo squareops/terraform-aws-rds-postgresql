@@ -83,7 +83,7 @@ module "vpc" {
 }
 
 module "rds-pg" {
-  source                           = "../.."
+  source                           = "squareops/rds-postgresql/aws"
   name                             = local.name
   db_name                          = "postgres"
   family                           = local.family
