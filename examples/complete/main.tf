@@ -1,16 +1,16 @@
 locals {
-  region                  = "us-west-2"
+  region                  = "us-east-1"
   name                    = "postgresql"
   family                  = "postgres15"
   vpc_cidr                = "10.20.0.0/16"
   environment             = "prod"
   create_namespace        = true
-  namespace               = "postgres"
+  namespace               = "pg"
   engine_version          = "15.4"
-  instance_class          = "db.m5d.large"
+  instance_class          = "db.t4g.micro"
   storage_type            = "gp3"
   current_identity        = data.aws_caller_identity.current.arn
-  allowed_security_groups = ["sg-0a680afd35"]
+  allowed_security_groups = ["sg-xxxxxxxxxxxxxxxx"]
   custom_user_password    = ""
   additional_tags = {
     Owner      = "Organization_Name"
@@ -101,27 +101,28 @@ module "vpc" {
 module "rds-pg" {
   source                           = "squareops/rds-postgresql/aws"
   name                             = local.name
-  db_name                          = "postgres"
+  db_name                          = "test"
   multi_az                         = "true"
   family                           = local.family
   vpc_id                           = module.vpc.vpc_id 
+  allowed_security_groups          = local.allowed_security_groups
   subnet_ids                       = module.vpc.database_subnets ## db subnets
   environment                      = local.environment
   kms_key_arn                      = module.kms.key_arn
   storage_type                     = local.storage_type
   engine_version                   = local.engine_version
   instance_class                   = local.instance_class
-  master_username                  = "pguser"
+  master_username                  = "admin"
   allocated_storage                = "20"
   max_allocated_storage            = 120
   publicly_accessible              = false
   skip_final_snapshot              = true
   backup_window                    = "03:00-06:00"
   maintenance_window               = "Mon:00:00-Mon:03:00"
-  final_snapshot_identifier_prefix = "final"
+  final_snapshot_identifier_prefix = "final"   
   major_engine_version             = local.engine_version
   deletion_protection              = false
-  cloudwatch_metric_alarms_enabled = true
+  cloudwatch_metric_alarms_enabled = false
   alarm_cpu_threshold_percent      = 70
   disk_free_storage_space          = "10000000" # in bytes
   slack_notification_enabled       = false
@@ -131,21 +132,20 @@ module "rds-pg" {
   custom_user_password             = local.custom_user_password
   #if you want backup and restore then you have to create your cluster with rds vpc id , private subnets, kms key. 
   #And allow cluster security group in rds security group
-  # cluster_name                     = "cluster-name" 
-  # namespace                        = local.namespace
-  # create_namespace                 = local.create_namespace
-  # postgresdb_backup_enabled = false
-  # postgresdb_backup_config = {
-  #   postgres_database_name  = "" # which database backup you want
-  #   s3_bucket_region     = "" #s3 bucket region
-  #   cron_for_full_backup = "*/3 * * * *" 
-  #   bucket_uri           = "s3://xyz" #s3 bucket uri
-  # }
-  # postgresdb_restore_enabled = false
-  # postgresdb_restore_config = {
-  #   bucket_uri       = "s3://xyz" #s3 bucket uri which have dackup dump file
-  #   backup_file_name = "abc.dump" #Give only .sql or .zip file for restore
-  #   s3_bucket_region = "" # bucket region
-  #   DB_NAME          = "" # which db to restore backup file
-  # }
+  cluster_name                     = "" 
+  namespace                        = local.namespace
+  create_namespace                 = local.create_namespace
+  postgresdb_backup_enabled = false
+  postgresdb_backup_config = {
+    postgres_database_name  = "" # Specify the database name or Leave empty if you wish to backup all databases
+    cron_for_full_backup = "*/2 * * * *" # set cronjob for backup
+    bucket_uri           = "s3://mongodb-backups-atmosly" # s3 bucket uri
+  }
+  postgresdb_restore_enabled = false
+  postgresdb_restore_config = {
+    bucket_uri       = "s3://mongodb-backups-atmosly" #S3 bucket URI (without a trailing slash /) containing the backup dump file.
+    backup_file_name = "db5_20241114111607.sql" #Give .sql or .zip file for restore
+  }
 }
+
+
