@@ -158,7 +158,7 @@ module "security_group_rds" {
 }
 
 resource "aws_secretsmanager_secret" "secret_master_db" {
-  name = format("%s/%s/%s", var.environment, var.name, "rds-postgresql-passssss4")
+  name = format("%s/%s/%s", var.environment, var.name, "rds-postgresql-pass")
   tags = merge(
     { "Name" = format("%s/%s/%s", var.environment, var.name, "rds-postgres-pass") },
     local.tags,
