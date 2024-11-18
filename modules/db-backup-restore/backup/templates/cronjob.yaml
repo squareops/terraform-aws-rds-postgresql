@@ -18,20 +18,20 @@ spec:
           serviceAccountName: sa-postgres-backup
           containers:
           - name: backup-postgresdb
-            image: divyanshujain11/rds:postgres-backup-restore
+            image: amanravi12/postgresql-backup:v5
             imagePullPolicy: Always
-            command: ["./backup.sh"]
+            command: ["/backup/backup_script.sh"]
             env:
-            - name: db_endpoint
+            - name: DB_HOST
               value: {{ .Values.backup.database_endpoint }}
-            - name: db_username
+            - name: DB_USER
               value: {{ .Values.backup.database_user }}
-            - name: db_password
+            - name: DB_PASSWORD
               value: {{ .Values.backup.database_password }}
-            - name: bucket_uri
+            - name: S3_BUCKET
               value: {{ .Values.backup.bucket_uri }}
-            - name: AWS_DEFAULT_REGION
-              value: {{ .Values.backup.aws_default_region}}
-            - name: postgres_database_name
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_NAME
               value: {{ .Values.backup.postgres_database_name }}
             resources: {{ .Values.backupjob.resources | toYaml | nindent 12 }}

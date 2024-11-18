@@ -1,7 +1,6 @@
 ## Enable Full backup
 backup:
   bucket_uri: ${bucket_uri}
-  aws_default_region: ${s3_bucket_region}
   cron_for_full_backup: "${cron_for_full_backup}"
   postgres_database_name: "${postgres_database_name}"
   database_endpoint: "${db_endpoint}"

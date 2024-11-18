@@ -112,7 +112,7 @@ module "rds-pg" {
   storage_type                     = local.storage_type
   engine_version                   = local.engine_version
   instance_class                   = local.instance_class
-  master_username                  = "admin"
+  master_username                  = "pguser"
   allocated_storage                = "20"
   max_allocated_storage            = 120
   publicly_accessible              = false
