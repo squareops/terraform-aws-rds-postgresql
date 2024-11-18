@@ -5,11 +5,11 @@ provider "aws" {
   }
 }
 data "aws_eks_cluster" "cluster" {
-  name = ""
+  name = "non-prod-15nov"
 
 }
 data "aws_eks_cluster_auth" "cluster" {
-  name = ""
+  name = "non-prod-15nov"
 }
 
 provider "kubernetes" {

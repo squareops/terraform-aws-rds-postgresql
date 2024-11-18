@@ -9,9 +9,9 @@ spec:
       serviceAccountName: sa-postgres-restore
       containers:
         - name: restore-postgresdb
-          image: divyanshujain11/rds:postgres-backup-restore
+          image: amanravi12/postgresql-restore:v6
           imagePullPolicy: Always
-          command: ["./restore.sh"]
+          command: ["/restore/restore_script.sh"]
           env:
             - name: DB_HOST
               value: {{ .Values.restore.db_endpoint }}
@@ -19,11 +19,13 @@ spec:
               value: {{ .Values.restore.db_username }}
             - name: DB_PASSWORD
               value: {{ .Values.restore.db_password }}
-            - name: bucket_uri
+            - name: POSTGRESQL_BUCKET_RESTORE_URI
               value: {{ .Values.restore.bucket_uri }}
-            - name: DB_NAME
-              value: {{ .Values.restore.DB_NAME }}
-            - name: backup_file_name
+            - name: DB_PORT
+              value: "5432"
+            # - name: DB_NAME
+            #   value: {{ .Values.restore.DB_NAME }}
+            - name: RESTORE_FILE_NAME
               value: {{ .Values.restore.backup_file_name }}
           resources: {{ .Values.restorejob.resources | toYaml | nindent 12 }}
       restartPolicy: Never

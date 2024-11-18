@@ -1,10 +1,8 @@
 restore:
   bucket_uri: ${bucket_uri}
-  aws_default_region: ${s3_bucket_region}
   db_endpoint: "${db_endpoint}"
   db_password: "${db_password}"
   db_username: "${db_username}"
-  DB_NAME: "${DB_NAME}"
   backup_file_name: "${backup_file_name}"
 
 auth:
