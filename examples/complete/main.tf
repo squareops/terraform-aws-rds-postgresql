@@ -23,8 +23,8 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 module "kms" {
-  source = "terraform-aws-modules/kms/aws"
-  version = "~> 1.0"
+  source                  = "terraform-aws-modules/kms/aws"
+  version                 = "~> 1.0"
   deletion_window_in_days = 7
   description             = "Complete key example showing various configurations available"
   enable_key_rotation     = true
@@ -104,7 +104,7 @@ module "rds-pg" {
   db_name                          = "test"
   multi_az                         = "true"
   family                           = local.family
-  vpc_id                           = module.vpc.vpc_id 
+  vpc_id                           = module.vpc.vpc_id
   allowed_security_groups          = local.allowed_security_groups
   subnet_ids                       = module.vpc.database_subnets ## db subnets
   environment                      = local.environment
@@ -119,7 +119,7 @@ module "rds-pg" {
   skip_final_snapshot              = true
   backup_window                    = "03:00-06:00"
   maintenance_window               = "Mon:00:00-Mon:03:00"
-  final_snapshot_identifier_prefix = "final"   
+  final_snapshot_identifier_prefix = "final"
   major_engine_version             = local.engine_version
   deletion_protection              = false
   cloudwatch_metric_alarms_enabled = false
@@ -130,22 +130,20 @@ module "rds-pg" {
   slack_channel                    = "postgresql-notification"
   slack_webhook_url                = "https://hooks/xxxxxxxx"
   custom_user_password             = local.custom_user_password
-  #if you want backup and restore then you have to create your cluster with rds vpc id , private subnets, kms key. 
+  #if you want backup and restore then you have to create your cluster with rds vpc id , private subnets, kms key.
   #And allow cluster security group in rds security group
-  cluster_name                     = "" 
-  namespace                        = local.namespace
-  create_namespace                 = local.create_namespace
+  cluster_name              = ""
+  namespace                 = local.namespace
+  create_namespace          = local.create_namespace
   postgresdb_backup_enabled = false
   postgresdb_backup_config = {
-    postgres_database_name  = "" # Specify the database name or Leave empty if you wish to backup all databases
-    cron_for_full_backup = "*/2 * * * *" # set cronjob for backup
-    bucket_uri           = "s3://mongodb-backups-atmosly" # s3 bucket uri
+    postgres_database_name = ""                             # Specify the database name or Leave empty if you wish to backup all databases
+    cron_for_full_backup   = "*/2 * * * *"                  # set cronjob for backup
+    bucket_uri             = "s3://mongodb-backups-atmosly" # s3 bucket uri
   }
   postgresdb_restore_enabled = false
   postgresdb_restore_config = {
     bucket_uri       = "s3://mongodb-backups-atmosly" #S3 bucket URI (without a trailing slash /) containing the backup dump file.
-    backup_file_name = "db5_20241114111607.sql" #Give .sql or .zip file for restore
+    backup_file_name = "db5_20241114111607.sql"       #Give .sql or .zip file for restore
   }
 }
-
-
