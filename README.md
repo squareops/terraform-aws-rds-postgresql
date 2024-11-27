@@ -27,10 +27,12 @@ module "rds-pg" {
   name                             = "postgresql"
   db_name                          = "proddb"
   vpc_id                           = "vpc-047eb8acfb73"
-  multi_az                         = "true"
+  multi_az                         = false
   subnet_ids                       = ["subnet-b39cfc", "subnet-090b8d8"]
   environment                      = "prod"
+  create_namespace                 = true
   storage_type                     = "gp3"
+  cluster_name                     = ""
   replica_enable                   = false
   replica_count                    = 1
   kms_key_arn                      = "arn:aws:kms:region:2222222222:key/f8c8d802-a34b"
