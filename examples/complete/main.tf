@@ -139,13 +139,13 @@ module "rds-pg" {
   create_namespace          = local.create_namespace
   postgresdb_backup_enabled = false
   postgresdb_backup_config = {
-    postgres_database_name = ""                             # Specify the database name or Leave empty if you wish to backup all databases
-    cron_for_full_backup   = "*/2 * * * *"                  # set cronjob for backup
+    postgres_database_name = ""                              # Specify the database name or Leave empty if you wish to backup all databases
+    cron_for_full_backup   = "*/2 * * * *"                   # set cronjob for backup
     bucket_uri             = "s3://postgres-backups-atmosly" # s3 bucket uri
   }
   postgresdb_restore_enabled = false
   postgresdb_restore_config = {
     bucket_uri       = "s3://postgres-backups-atmosly" #S3 bucket URI (without a trailing slash /) containing the backup dump file.
-    backup_file_name = "db5_20241114111607.sql"       #Give .sql or .zip file for restore
+    backup_file_name = "db5_20241114111607.sql"        #Give .sql or .zip file for restore
   }
 }
