@@ -103,7 +103,7 @@ module "rds-pg" {
   publicly_accessible              = false
   skip_final_snapshot              = true
   backup_window                    = "03:00-06:00"
-  maintenance_window               = "Mon:00:00-Mon:03:00
+  maintenance_window               = "Mon:00:00-Mon:03:00"
   final_snapshot_identifier_prefix = "final"
   major_engine_version             = local.engine_version
   deletion_protection              = true
