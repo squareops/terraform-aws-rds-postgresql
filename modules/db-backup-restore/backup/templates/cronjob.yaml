@@ -18,7 +18,7 @@ spec:
           serviceAccountName: sa-postgres-backup
           containers:
           - name: backup-postgresdb
-            image: amanravi12/postgresql-backup:v5
+            image: squareops01/rds-postgresql-backup:v1
             imagePullPolicy: Always
             command: ["/backup/backup_script.sh"]
             env:

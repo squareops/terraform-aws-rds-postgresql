@@ -9,7 +9,7 @@ spec:
       serviceAccountName: sa-postgres-restore
       containers:
         - name: restore-postgresdb
-          image: amanravi12/postgresql-restore:v6
+          image: squareops01/rds-postgresql-restore:v1
           imagePullPolicy: Always
           command: ["/restore/restore_script.sh"]
           env:
@@ -23,8 +23,6 @@ spec:
               value: {{ .Values.restore.bucket_uri }}
             - name: DB_PORT
               value: "5432"
-            # - name: DB_NAME
-            #   value: {{ .Values.restore.DB_NAME }}
             - name: RESTORE_FILE_NAME
               value: {{ .Values.restore.backup_file_name }}
           resources: {{ .Values.restorejob.resources | toYaml | nindent 12 }}
