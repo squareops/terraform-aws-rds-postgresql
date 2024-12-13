@@ -167,16 +167,14 @@ resource "random_password" "master" {
 }
 
 resource "aws_secretsmanager_secret_version" "rds_credentials" {
-  count         = length(random_password.master) > 0 ? 1 : 0
-  secret_id     = aws_secretsmanager_secret.secret_master_db.id
-  secret_string = <<EOF
-{
-  "username": "${module.db.db_instance_username}",
-  "password": length(random_password.master) > 0 ? element(random_password.master, 0).result : var.custom_password,
-  "engine": "${var.engine}",
-  "host": "${module.db.db_instance_endpoint}"
-}
-EOF
+  count     = length(random_password.master) > 0 ? 1 : 0
+  secret_id = aws_secretsmanager_secret.secret_master_db.id
+  secret_string = jsonencode({
+    username = "${module.db.db_instance_username}",
+    password = length(random_password.master) > 0 ? element(random_password.master, 0).result : var.custom_user_password,
+    engine   = "${var.engine}",
+    host     = "${module.db.db_instance_endpoint}"
+  })
 }
 
 # Cloudwatch alarms
