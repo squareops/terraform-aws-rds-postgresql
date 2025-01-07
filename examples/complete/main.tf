@@ -10,6 +10,8 @@ locals {
   instance_class          = "db.t4g.micro"
   storage_type            = "gp3"
   cluster_name            = ""
+  replica_count           = 1
+  replica_enable          = false
   current_identity        = data.aws_caller_identity.current.arn
   allowed_security_groups = ["sg-xxxxxxxxxxxxxx"]
   custom_user_password    = ""
