@@ -23,6 +23,11 @@ output "db_instance_username" {
   value       = nonsensitive(module.db.db_instance_username)
 }
 
+output "db_name" {
+  description = "The database name used in the RDS module"
+  value       = var.db_name
+}
+
 output "db_instance_password" {
   description = "Password for accessing the database."
   value       = var.custom_user_password != "" ? var.custom_user_password : nonsensitive(random_password.master[0].result)
