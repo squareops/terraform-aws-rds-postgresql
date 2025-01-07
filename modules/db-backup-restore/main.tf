@@ -14,7 +14,7 @@ resource "helm_release" "postgresdb_backup" {
   timeout    = 600
   namespace  = var.namespace
   values = [
-    templatefile("../../helm/values/backup/values.yaml", {
+    templatefile("${path.module}/../../helm/values/backup/values.yaml", {
       bucket_uri             = var.postgresdb_backup_config.bucket_uri,
       postgres_database_name = var.postgresdb_backup_config.postgres_database_name,
       db_endpoint            = var.postgresdb_backup_config.db_endpoint,
@@ -37,7 +37,7 @@ resource "helm_release" "postgresdb_restore" {
   timeout    = 600
   namespace  = var.namespace
   values = [
-    templatefile("../../helm/values/restore/values.yaml", {
+    templatefile("${path.module}/../../helm/values/restore/values.yaml", {
       bucket_uri       = var.postgresdb_restore_config.bucket_uri,
       db_endpoint      = var.postgresdb_restore_config.db_endpoint,
       db_password      = var.postgresdb_restore_config.db_password,
