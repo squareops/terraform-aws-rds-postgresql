@@ -13,7 +13,8 @@ data "aws_eks_cluster" "kubernetes_cluster" {
 }
 
 resource "aws_iam_role" "postgres_backup_role" {
-  name = format("%s-%s-%s", var.cluster_name, var.name, "postgres-backup-rds")
+  count = var.postgresdb_backup_enabled ? 1 : 0
+  name  = format("%s-%s-%s", var.cluster_name, var.name, "postgres-backup-rds")
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
@@ -56,7 +57,8 @@ resource "aws_iam_role" "postgres_backup_role" {
 
 
 resource "aws_iam_role" "postgres_restore_role" {
-  name = format("%s-%s-%s", var.cluster_name, var.name, "postgres-restore")
+  count = var.postgresdb_restore_enabled ? 1 : 0
+  name  = format("%s-%s-%s", var.cluster_name, var.name, "postgres-restore")
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [

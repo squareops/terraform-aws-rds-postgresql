@@ -22,7 +22,7 @@ resource "helm_release" "postgresdb_backup" {
       db_username            = var.postgresdb_backup_config.db_username,
       # s3_bucket_region           = var.postgresdb_backup_config.s3_bucket_region ,
       cron_for_full_backup = var.postgresdb_backup_config.cron_for_full_backup,
-      annotations          = var.bucket_provider_type == "s3" ? "eks.amazonaws.com/role-arn: ${aws_iam_role.postgres_backup_role.arn}" : "iam.gke.io/gcp-service-account: ${var.service_account_backup}"
+      annotations          = var.bucket_provider_type == "s3" ? "eks.amazonaws.com/role-arn: ${aws_iam_role.postgres_backup_role[count.index].arn}" : "iam.gke.io/gcp-service-account: ${var.service_account_backup}"
     })
   ]
 }
@@ -43,7 +43,7 @@ resource "helm_release" "postgresdb_restore" {
       db_password      = var.postgresdb_restore_config.db_password,
       db_username      = var.postgresdb_restore_config.db_username,
       backup_file_name = var.postgresdb_restore_config.backup_file_name,
-      annotations      = var.bucket_provider_type == "s3" ? "eks.amazonaws.com/role-arn: ${aws_iam_role.postgres_restore_role.arn}" : "iam.gke.io/gcp-service-account: ${var.service_account_restore}"
+      annotations      = var.bucket_provider_type == "s3" ? "eks.amazonaws.com/role-arn: ${aws_iam_role.postgres_restore_role[count.index].arn}" : "iam.gke.io/gcp-service-account: ${var.service_account_restore}"
     })
   ]
 }

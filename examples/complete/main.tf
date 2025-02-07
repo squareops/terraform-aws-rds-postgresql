@@ -6,7 +6,7 @@ locals {
   environment             = "prod"
   create_namespace        = true
   namespace               = "pg"
-  engine_version          = "15.4"
+  engine_version          = "15.7"
   instance_class          = "db.t4g.micro"
   storage_type            = "gp3"
   cluster_name            = ""
@@ -92,7 +92,7 @@ module "vpc" {
   name                    = local.name
   vpc_cidr                = local.vpc_cidr
   environment             = local.environment
-  availability_zones      = ["us-east-1a", "us-east-1b"]
+  availability_zones      = ["us-east-2a", "us-east-2b"]
   public_subnet_enabled   = true
   auto_assign_public_ip   = true
   intra_subnet_enabled    = false
@@ -141,13 +141,13 @@ module "rds-pg" {
   create_namespace          = local.create_namespace
   postgresdb_backup_enabled = false
   postgresdb_backup_config = {
-    postgres_database_name = ""                              # Specify the database name or Leave empty if you wish to backup all databases
-    cron_for_full_backup   = "*/2 * * * *"                   # set cronjob for backup
-    bucket_uri             = "s3://postgres-backups-atmosly" # s3 bucket uri
+    postgres_database_name = ""                               # Specify the database name or Leave empty if you wish to backup all databases
+    cron_for_full_backup   = "*/2 * * * *"                    # set cronjob for backup
+    bucket_uri             = "s3://my-backup-dumps-databases" # s3 bucket uri
   }
-  postgresdb_restore_enabled = false
+  postgresdb_restore_enabled = true
   postgresdb_restore_config = {
-    bucket_uri       = "s3://postgres-backups-atmosly" #S3 bucket URI (without a trailing slash /) containing the backup dump file.
-    backup_file_name = "db5_20241114111607.sql"        #Give .sql or .zip file for restore
+    bucket_uri       = "s3://my-backup-dumps-databases" #S3 bucket URI (without a trailing slash /) containing the backup dump file.
+    backup_file_name = "atmosly_db1.sql"                #Give .sql or .zip file for restore
   }
 }
