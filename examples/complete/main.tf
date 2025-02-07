@@ -104,14 +104,14 @@ module "vpc" {
 module "rds-pg" {
   source                           = "squareops/rds-postgresql/aws"
   version                          = "2.0.0"
-  name     = local.name
-  db_name  = "test"
-  multi_az = false
-  family   = local.family
+  name                             = local.name
+  db_name                          = "test"
+  multi_az                         = false
+  family                           = local.family
   vpc_id                           = module.vpc.vpc_id
-  allowed_security_groups = local.allowed_security_groups
+  allowed_security_groups          = local.allowed_security_groups
   subnet_ids                       = module.vpc.database_subnets
-  environment = local.environment
+  environment                      = local.environment
   kms_key_arn                      = module.kms.key_arn
   storage_type                     = local.storage_type
   engine_version                   = local.engine_version
@@ -141,7 +141,7 @@ module "rds-pg" {
   create_namespace          = local.create_namespace
   postgresdb_backup_enabled = false
   postgresdb_backup_config = {
-    postgres_database_name = ""                    # Specify the database name or Leave empty if you wish to backup all databases
+    postgres_database_name = ""                               # Specify the database name or Leave empty if you wish to backup all databases
     cron_for_full_backup   = "*/2 * * * *"                    # set cronjob for backup
     bucket_uri             = "s3://my-backup-dumps-databases" # s3 bucket uri
   }
@@ -151,4 +151,3 @@ module "rds-pg" {
     backup_file_name = "atmosly_db1.sql"                #Give .sql or .zip file for restore
   }
 }
-

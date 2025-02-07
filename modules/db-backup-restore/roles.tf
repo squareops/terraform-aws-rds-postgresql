@@ -58,7 +58,7 @@ resource "aws_iam_role" "postgres_backup_role" {
 
 resource "aws_iam_role" "postgres_restore_role" {
   count = var.postgresdb_restore_enabled ? 1 : 0
-  name = format("%s-%s-%s", var.cluster_name, var.name, "postgres-restore")
+  name  = format("%s-%s-%s", var.cluster_name, var.name, "postgres-restore")
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [

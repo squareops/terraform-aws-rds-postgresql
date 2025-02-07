@@ -27,7 +27,7 @@ This example will be very useful for users who are new to a module and want to q
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_kms"></a> [kms](#module\_kms) | terraform-aws-modules/kms/aws | ~> 1.0 |
-| <a name="module_rds-pg"></a> [rds-pg](#module\_rds-pg) | squareops/rds-postgresql/aws | n/a |
+| <a name="module_rds-pg"></a> [rds-pg](#module\_rds-pg) | squareops/rds-postgresql/aws | 2.0.0 |
 | <a name="module_vpc"></a> [vpc](#module\_vpc) | squareops/vpc/aws | n/a |
 
 ## Resources
@@ -47,6 +47,7 @@ No inputs.
 
 | Name | Description |
 |------|-------------|
+| <a name="output_db_name"></a> [db\_name](#output\_db\_name) | Database name |
 | <a name="output_instance_endpoint"></a> [instance\_endpoint](#output\_instance\_endpoint) | Connection endpoint of the RDS instance. |
 | <a name="output_instance_name"></a> [instance\_name](#output\_instance\_name) | Name of the database instance. |
 | <a name="output_instance_password"></a> [instance\_password](#output\_instance\_password) | Password for accessing the database (Note: Terraform does not track this password after initial creation). |
