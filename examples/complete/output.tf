@@ -12,6 +12,11 @@ output "instance_name" {
   value       = module.rds-pg.db_instance_name
 }
 
+output "db_name" {
+  description = "Database name"
+  value       = module.rds-pg.db_name
+}
+
 output "rds-mysql_replica_db_instance_name" {
   description = "The name of the database instance"
   value       = module.rds-pg.replica_db_instance_name

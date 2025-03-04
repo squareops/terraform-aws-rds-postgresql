@@ -1,0 +1,30 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: restore
+spec:
+  template:
+    spec:
+      affinity: {{ .Values.affinity | toYaml | nindent 6 }}
+      serviceAccountName: sa-postgres-restore
+      containers:
+        - name: restore-postgresdb
+          image: squareops01/rds-postgresql-restore:v2
+          imagePullPolicy: Always
+          command: ["/restore/restore_script.sh"]
+          env:
+            - name: DB_HOST
+              value: {{ .Values.restore.db_endpoint }}
+            - name: DB_USER
+              value: {{ .Values.restore.db_username }}
+            - name: DB_PASSWORD
+              value: {{ .Values.restore.db_password }}
+            - name: POSTGRESQL_BUCKET_RESTORE_URI
+              value: {{ .Values.restore.bucket_uri }}
+            - name: DB_PORT
+              value: "5432"
+            - name: RESTORE_FILE_NAME
+              value: {{ .Values.restore.backup_file_name }}
+          resources: {{ .Values.restorejob.resources | toYaml | nindent 12 }}
+      restartPolicy: Never
+  backoffLimit: 4
