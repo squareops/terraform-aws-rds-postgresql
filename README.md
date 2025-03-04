@@ -196,6 +196,7 @@ The required IAM permissions to create resources from this module can be found [
 | <a name="output_db_instance_name"></a> [db\_instance\_name](#output\_db\_instance\_name) | Name of the database instance |
 | <a name="output_db_instance_password"></a> [db\_instance\_password](#output\_db\_instance\_password) | Password for accessing the database. |
 | <a name="output_db_instance_username"></a> [db\_instance\_username](#output\_db\_instance\_username) | Master username for accessing the database. |
+| <a name="output_db_name"></a> [db\_name](#output\_db\_name) | The database name used in the RDS module |
 | <a name="output_db_parameter_group_id"></a> [db\_parameter\_group\_id](#output\_db\_parameter\_group\_id) | ID of the parameter group associated with the RDS instance. |
 | <a name="output_db_subnet_group_id"></a> [db\_subnet\_group\_id](#output\_db\_subnet\_group\_id) | ID of the subnet group associated with the RDS instance. |
 | <a name="output_master_credential_secret_arn"></a> [master\_credential\_secret\_arn](#output\_master\_credential\_secret\_arn) | The ARN of the master user secret (Only available when manage\_master\_user\_password is set to true) |

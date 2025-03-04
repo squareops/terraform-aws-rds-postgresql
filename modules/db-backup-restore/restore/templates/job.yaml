@@ -9,7 +9,7 @@ spec:
       serviceAccountName: sa-postgres-restore
       containers:
         - name: restore-postgresdb
-          image: squareops01/rds-postgresql-restore:v1
+          image: squareops01/rds-postgresql-restore:v2
           imagePullPolicy: Always
           command: ["/restore/restore_script.sh"]
           env:

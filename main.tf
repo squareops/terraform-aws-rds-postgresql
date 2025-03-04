@@ -323,6 +323,7 @@ resource "aws_lambda_permission" "sns_lambda_slack_invoke" {
 module "backup_restore" {
   depends_on                = [module.db]
   source                    = "./modules/db-backup-restore"
+  name                      = var.name
   cluster_name              = var.cluster_name
   namespace                 = var.namespace
   create_namespace          = var.create_namespace
@@ -331,20 +332,17 @@ module "backup_restore" {
     db_username            = var.master_username
     db_password            = var.custom_user_password != "" ? var.custom_user_password : nonsensitive(random_password.master[0].result)
     postgres_database_name = var.postgresdb_backup_config.postgres_database_name
-    # s3_bucket_region     = var.postgresdb_backup_config.s3_bucket_region
-    cron_for_full_backup = var.postgresdb_backup_config.cron_for_full_backup
-    bucket_uri           = var.postgresdb_backup_config.bucket_uri
-    db_endpoint          = replace(var.replica_enable ? module.db_replica[0].db_instance_endpoint : module.db.db_instance_endpoint, ":5432", "")
+    cron_for_full_backup   = var.postgresdb_backup_config.cron_for_full_backup
+    bucket_uri             = var.postgresdb_backup_config.bucket_uri
+    db_endpoint            = replace(var.replica_enable ? module.db_replica[0].db_instance_endpoint : module.db.db_instance_endpoint, ":5432", "")
   }
 
   postgresdb_restore_enabled = var.postgresdb_restore_enabled
   postgresdb_restore_config = {
-    db_endpoint = replace(var.replica_enable ? module.db_replica[0].db_instance_endpoint : module.db.db_instance_endpoint, ":5432", "")
-    db_username = var.master_username
-    db_password = var.custom_user_password != "" ? var.custom_user_password : nonsensitive(random_password.master[0].result)
-    bucket_uri  = var.postgresdb_restore_config.bucket_uri
-    # s3_bucket_region = var.postgresdb_restore_config.s3_bucket_region
-    # DB_NAME          = var.postgresdb_restore_config.DB_NAME,
+    db_endpoint      = replace(var.replica_enable ? module.db_replica[0].db_instance_endpoint : module.db.db_instance_endpoint, ":5432", "")
+    db_username      = var.master_username
+    db_password      = var.custom_user_password != "" ? var.custom_user_password : nonsensitive(random_password.master[0].result)
+    bucket_uri       = var.postgresdb_restore_config.bucket_uri
     backup_file_name = var.postgresdb_restore_config.backup_file_name,
   }
 }
