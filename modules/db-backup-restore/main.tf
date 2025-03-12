@@ -10,7 +10,7 @@ resource "helm_release" "postgresdb_backup" {
   count      = var.postgresdb_backup_enabled ? 1 : 0
   depends_on = [kubernetes_namespace.postgresdb]
   name       = "postgresdb-backup"
-  chart      = "../../modules/db-backup-restore/backup"
+  chart      = "${path.module}/../../modules/db-backup-restore/backup"
   timeout    = 600
   namespace  = var.namespace
   values = [
@@ -33,7 +33,7 @@ resource "helm_release" "postgresdb_restore" {
   count      = var.postgresdb_restore_enabled ? 1 : 0
   depends_on = [kubernetes_namespace.postgresdb]
   name       = "postgresdb-restore"
-  chart      = "../../modules/db-backup-restore/restore"
+  chart      = "${path.module}/../../modules/db-backup-restore/restore"
   timeout    = 600
   namespace  = var.namespace
   values = [
