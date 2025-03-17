@@ -103,7 +103,7 @@ module "vpc" {
 
 module "rds-pg" {
   source                           = "squareops/rds-postgresql/aws"
-  version                          = "2.0.0"
+  version                          = "2.0.1"
   name                             = local.name
   db_name                          = "test"
   multi_az                         = false
