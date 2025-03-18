@@ -1,0 +1,37 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: backup-postgresdb
+spec:
+  schedule: {{ .Values.backup.cron_for_full_backup |  quote }}
+  concurrencyPolicy: Forbid
+  suspend: false
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          affinity: {{ .Values.affinity | toYaml | nindent 10 }}
+          restartPolicy: OnFailure
+          serviceAccountName: sa-postgres-backup
+          containers:
+          - name: backup-postgresdb
+            image: squareops01/rds-postgresql-backup:v2
+            imagePullPolicy: Always
+            command: ["/backup/backup_script.sh"]
+            env:
+            - name: DB_HOST
+              value: {{ .Values.backup.database_endpoint }}
+            - name: DB_USER
+              value: {{ .Values.backup.database_user }}
+            - name: DB_PASSWORD
+              value: {{ .Values.backup.database_password }}
+            - name: S3_BUCKET
+              value: {{ .Values.backup.bucket_uri }}
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_NAME
+              value: {{ .Values.backup.postgres_database_name }}
+            resources: {{ .Values.backupjob.resources | toYaml | nindent 12 }}

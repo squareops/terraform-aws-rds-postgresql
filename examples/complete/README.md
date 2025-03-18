@@ -14,20 +14,20 @@ This example will be very useful for users who are new to a module and want to q
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 3.43.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.0.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 3.43.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.0.0 |
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_kms"></a> [kms](#module\_kms) | terraform-aws-modules/kms/aws | n/a |
-| <a name="module_rds-pg"></a> [rds-pg](#module\_rds-pg) | ../../ | n/a |
+| <a name="module_kms"></a> [kms](#module\_kms) | terraform-aws-modules/kms/aws | ~> 1.0 |
+| <a name="module_rds-pg"></a> [rds-pg](#module\_rds-pg) | squareops/rds-postgresql/aws | 2.0.0 |
 | <a name="module_vpc"></a> [vpc](#module\_vpc) | squareops/vpc/aws | n/a |
 
 ## Resources
@@ -35,6 +35,8 @@ This example will be very useful for users who are new to a module and want to q
 | Name | Type |
 |------|------|
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
+| [aws_eks_cluster.cluster](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/eks_cluster) | data source |
+| [aws_eks_cluster_auth.cluster](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/eks_cluster_auth) | data source |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 
 ## Inputs
@@ -45,6 +47,7 @@ No inputs.
 
 | Name | Description |
 |------|-------------|
+| <a name="output_db_name"></a> [db\_name](#output\_db\_name) | Database name |
 | <a name="output_instance_endpoint"></a> [instance\_endpoint](#output\_instance\_endpoint) | Connection endpoint of the RDS instance. |
 | <a name="output_instance_name"></a> [instance\_name](#output\_instance\_name) | Name of the database instance. |
 | <a name="output_instance_password"></a> [instance\_password](#output\_instance\_password) | Password for accessing the database (Note: Terraform does not track this password after initial creation). |
