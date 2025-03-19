@@ -94,10 +94,9 @@ variable "postgresdb_backup_config" {
   type = map(string)
   default = {
     bucket_uri             = ""
-    s3_bucket_region       = ""
     cron_for_full_backup   = ""
     postgres_database_name = ""
-    # db_endpoint=""
+
   }
   description = "configuration options for MySQL database backups. It includes properties such as the S3 bucket URI, the S3 bucket region, and the cron expression for full backups."
 }
@@ -106,9 +105,6 @@ variable "postgresdb_restore_config" {
   type = any
   default = {
     bucket_uri = ""
-    file_name  = ""
-    # s3_bucket_region = ""
-    DB_NAME          = ""
     backup_file_name = ""
   }
   description = "Configuration options for restoring dump to the MySQL database."
