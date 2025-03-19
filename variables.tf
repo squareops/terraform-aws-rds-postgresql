@@ -351,7 +351,7 @@ variable "postgresdb_backup_config" {
     postgres_database_name = ""
 
   }
-  description = "configuration options for MySQL database backups. It includes properties such as the S3 bucket URI, the S3 bucket region, and the cron expression for full backups."
+  description = "configuration options for MySQL database backups. It includes properties such as the S3 bucket region, and the cron expression for full backups."
 }
 
 variable "postgresdb_restore_config" {
